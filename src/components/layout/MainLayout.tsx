@@ -26,16 +26,23 @@ export default function MainLayout({ children }: MainLayoutProps) {
   } = useCryptoStore();
 
   useEffect(() => {
+    console.log('MainLayout: useEffect triggered, starting data fetch...');
     // Initial data fetch
     const loadInitialData = async () => {
-      await Promise.all([
-        fetchCryptocurrencies(),
-        fetchMarketData(),
-        fetchTrendingTokens(),
-        fetchTopGainers(),
-        fetchTopLosers(),
-        fetchRecentlyAdded(),
-      ]);
+      console.log('MainLayout: loadInitialData function called');
+      try {
+        await Promise.all([
+          fetchCryptocurrencies(),
+          fetchMarketData(),
+          fetchTrendingTokens(),
+          fetchTopGainers(),
+          fetchTopLosers(),
+          fetchRecentlyAdded(),
+        ]);
+        console.log('MainLayout: All data fetch operations completed');
+      } catch (error) {
+        console.error('MainLayout: Error in loadInitialData:', error);
+      }
     };
 
     loadInitialData();

@@ -101,12 +101,12 @@ const CryptoTableRow = memo<CryptoTableRowProps>(({
       {/* 7d Change */}
       <td className="px-4 py-4 text-right">
         <span className={`text-sm font-medium ${
-          token.price_change_percentage_7d >= 0
+          (token.price_change_percentage_7d_in_currency || token.price_change_percentage_7d || 0) >= 0
             ? 'text-green-400'
             : 'text-red-400'
         }`}>
-          {token.price_change_percentage_7d >= 0 ? '▲' : '▼'}
-          {formatPercentage(token.price_change_percentage_7d)}
+          {(token.price_change_percentage_7d_in_currency || token.price_change_percentage_7d || 0) >= 0 ? '▲' : '▼'}
+          {formatPercentage(token.price_change_percentage_7d_in_currency || token.price_change_percentage_7d || 0)}
         </span>
       </td>
       
@@ -129,7 +129,7 @@ const CryptoTableRow = memo<CryptoTableRowProps>(({
         <div className="w-20 h-10 mx-auto">
           <SparklineChart
             data={token.sparkline_in_7d?.price || []}
-            isPositive={token.price_change_percentage_7d >= 0}
+            isPositive={(token.price_change_percentage_7d_in_currency || token.price_change_percentage_7d || 0) >= 0}
           />
         </div>
       </td>

@@ -22,11 +22,24 @@ export default function CryptocurrencyTable() {
     removeFromWatchlist,
     isInWatchlist,
     setModalState,
+    activeTab,
+    cryptocurrencies,
+    topGainers,
+    topLosers,
+    recentlyAdded,
+    watchlist,
+    searchQuery,
+    filterConfig,
   } = useCryptoStore();
 
   const [hoveredRow, setHoveredRow] = useState<string | null>(null);
 
-  const data = useMemo(() => getCurrentTabData(), [getCurrentTabData]);
+  const data = useMemo(() => {
+    console.log('CryptocurrencyTable: Getting current tab data, activeTab:', activeTab, 'cryptocurrencies count:', cryptocurrencies.length);
+    const result = getCurrentTabData();
+    console.log('CryptocurrencyTable: getCurrentTabData returned:', result.length, 'items');
+    return result;
+  }, [getCurrentTabData, activeTab, cryptocurrencies, topGainers, topLosers, recentlyAdded, watchlist, sortConfig, searchQuery, filterConfig]);
 
   const handleSort = (field: SortField) => {
     setSortConfig({

@@ -10,6 +10,7 @@ import {
 
 // Helper function to make API requests through our Next.js API routes
 async function fetchFromAPI(endpoint: string, params: Record<string, any> = {}) {
+  console.log('fetchFromAPI: Starting request to:', endpoint, 'with params:', params);
   const url = new URL(endpoint, window.location.origin);
   
   // Add query parameters
@@ -18,26 +19,27 @@ async function fetchFromAPI(endpoint: string, params: Record<string, any> = {}) 
       url.searchParams.append(key, value.toString());
     }
   });
-
-  console.log('Making API request to:', url.toString());
-
+  
+  console.log('fetchFromAPI: Full URL:', url.toString());
+  
   const response = await fetch(url.toString());
   
-  console.log('API response status:', response.status, response.statusText);
+  console.log('fetchFromAPI: Response status:', response.status, response.statusText);
   
   if (!response.ok) {
     const errorText = await response.text();
-    console.error('API error response:', errorText);
+    console.error('fetchFromAPI: Error response:', errorText);
     throw new Error(`API error: ${response.status} ${response.statusText} - ${errorText}`);
   }
   
   const data = await response.json();
-  console.log('API response data length:', Array.isArray(data) ? data.length : 'not an array');
+  console.log('fetchFromAPI: Response data type:', typeof data, 'isArray:', Array.isArray(data), 'length:', Array.isArray(data) ? data.length : 'N/A');
   return data;
 }
 
 // Helper function to transform CoinGecko coin data to our format
 function transformCoinGeckoData(coin: any): Cryptocurrency {
+  console.log('API: Transforming coin data for:', coin.name, 'sparkline data:', coin.sparkline_in_7d?.price?.length || 0, 'points');
   return {
     id: coin.id,
     symbol: coin.symbol,
@@ -80,37 +82,38 @@ function transformCoinGeckoData(coin: any): Cryptocurrency {
 class CryptoAPI {
   private subscribers: Map<string, Set<(data: any) => void>> = new Map();
   private intervals: Map<string, NodeJS.Timeout> = new Map();
-  private currentData: Cryptocurrency[] = [];
-  private marketData: MarketData | null = null;
-  private trades: Trade[] = [];
-  private socialSentiment: SocialSentiment[] = [];
 
   // Get all cryptocurrencies
   async getCryptocurrencies(): Promise<Cryptocurrency[]> {
-    console.log('Fetching cryptocurrencies from API...');
-    const data = await fetchFromAPI('/api/coins/markets', {
-      vs_currency: 'usd',
-      order: 'market_cap_desc',
-      per_page: 250, // Get more coins like CoinGecko
-      page: 1,
-      sparkline: true,
-      price_change_percentage: '1h,24h,7d,30d,1y'
-    });
-    
-    console.log('API response:', data.length, 'coins received');
-    
-    // Transform CoinGecko data to our format
-    const transformedData = data.map(transformCoinGeckoData);
-    
-    this.currentData = transformedData;
-    return transformedData;
+    console.log('API: Fetching cryptocurrencies from API...');
+    try {
+      const data = await fetchFromAPI('/api/coins/markets', {
+        vs_currency: 'usd',
+        order: 'market_cap_desc',
+        per_page: 250, // Get more coins like CoinGecko
+        page: 1,
+        sparkline: true,
+        price_change_percentage: '1h,24h,7d,30d,1y'
+      });
+      
+      console.log('API: Raw response received:', data.length, 'coins');
+      
+      // Transform CoinGecko data to our format and return directly (no caching)
+      const transformedData = data.map(transformCoinGeckoData);
+      console.log('API: Transformed data:', transformedData.length, 'coins');
+      return transformedData;
+    } catch (error) {
+      console.error('API: Error in getCryptocurrencies:', error);
+      throw error;
+    }
   }
 
   // Get market data
   async getMarketData(): Promise<MarketData> {
     const data = await fetchFromAPI('/api/global');
     
-    const marketData: MarketData = {
+    // Return market data directly (no caching)
+    return {
       total_market_cap: data.data.total_market_cap.usd,
       total_volume: data.data.total_volume.usd,
       market_cap_percentage: {
@@ -123,9 +126,6 @@ class CryptoAPI {
       total_market_cap_usd: data.data.total_market_cap.usd,
       total_volume_usd: data.data.total_volume.usd,
     };
-    
-    this.marketData = marketData;
-    return marketData;
   }
 
   // Get trending tokens
@@ -178,13 +178,33 @@ class CryptoAPI {
 
   // Get recently added tokens
   async getRecentlyAdded(): Promise<Cryptocurrency[]> {
-    // Use the current data and show some lower-ranked coins as "recently added"
-    return this.currentData.slice(50, 60);
+    // Fetch lower-ranked coins as "recently added"
+    const data = await fetchFromAPI('/api/coins/markets', {
+      vs_currency: 'usd',
+      order: 'market_cap_desc',
+      per_page: 10,
+      page: 6, // Get coins ranked 51-60
+      sparkline: true,
+      price_change_percentage: '1h,24h,7d,30d,1y'
+    });
+    
+    return data.map(transformCoinGeckoData);
   }
 
   // Get token by ID
   async getTokenById(id: string): Promise<Cryptocurrency | null> {
-    return this.currentData.find(token => token.id === id) || null;
+    // Fetch specific token data
+    const data = await fetchFromAPI('/api/coins/markets', {
+      vs_currency: 'usd',
+      ids: id,
+      sparkline: true,
+      price_change_percentage: '1h,24h,7d,30d,1y'
+    });
+    
+    if (data.length > 0) {
+      return transformCoinGeckoData(data[0]);
+    }
+    return null;
   }
 
   // Get historical price data
@@ -231,12 +251,14 @@ class CryptoAPI {
 
   // Get recent trades
   async getRecentTrades(): Promise<Trade[]> {
-    return [...this.trades];
+    // Return empty array since we don't have real trade data
+    return [];
   }
 
   // Get social sentiment
   async getSocialSentiment(): Promise<SocialSentiment[]> {
-    return [...this.socialSentiment];
+    // Return empty array since we don't have real sentiment data
+    return [];
   }
 
   // Search cryptocurrencies
@@ -298,7 +320,7 @@ class CryptoAPI {
   private startRealTimeUpdates(channel: string) {
     const interval = setInterval(() => {
       this.updateChannelData(channel);
-    }, 5000 + Math.random() * 3000); // 5-8 seconds
+    }, 30000); // 30 seconds for real-time updates (respecting API rate limits)
     
     this.intervals.set(channel, interval);
   }
@@ -311,85 +333,29 @@ class CryptoAPI {
     }
   }
 
-  private updateChannelData(channel: string) {
+  private async updateChannelData(channel: string) {
     const subscribers = this.subscribers.get(channel);
     if (!subscribers || subscribers.size === 0) return;
 
     switch (channel) {
       case 'prices':
-        this.updatePrices();
-        subscribers.forEach(callback => callback(this.currentData));
+        const freshPrices = await this.getCryptocurrencies();
+        subscribers.forEach(callback => callback(freshPrices));
         break;
       case 'trades':
-        this.updateTrades();
-        subscribers.forEach(callback => callback(this.trades));
+        // Skip trades for now since we don't have real trade data
         break;
       case 'market':
-        this.updateMarketData();
-        subscribers.forEach(callback => callback(this.marketData));
+        const freshMarketData = await this.getMarketData();
+        subscribers.forEach(callback => callback(freshMarketData));
         break;
       case 'sentiment':
-        this.updateSocialSentiment();
-        subscribers.forEach(callback => callback(this.socialSentiment));
+        // Skip sentiment for now since we don't have real sentiment data
         break;
     }
   }
 
-  private updatePrices() {
-    this.currentData = this.currentData.map(token => {
-      const volatility = token.market_cap_rank <= 10 ? 0.01 : 0.02;
-      const change = (Math.random() - 0.5) * volatility * token.current_price;
-      const newPrice = Math.max(0.01, token.current_price + change);
-      const priceChange24h = newPrice - token.current_price;
-      const priceChangePercentage24h = (priceChange24h / token.current_price) * 100;
-      
-      return {
-        ...token,
-        current_price: newPrice,
-        price_change_24h: priceChange24h,
-        price_change_percentage_24h: priceChangePercentage24h,
-        market_cap: newPrice * token.circulating_supply,
-        market_cap_change_24h: (newPrice - token.current_price) * token.circulating_supply,
-        market_cap_change_percentage_24h: priceChangePercentage24h,
-        high_24h: Math.max(token.high_24h, newPrice),
-        low_24h: Math.min(token.low_24h, newPrice),
-        last_updated: new Date().toISOString(),
-      };
-    });
-  }
 
-  private updateTrades() {
-    // Add new trades and remove old ones
-    const newTrade: Trade = {
-      id: `trade-${Date.now()}`,
-      token_symbol: ['BTC', 'ETH', 'SOL', 'ADA', 'DOT'][Math.floor(Math.random() * 5)],
-      price: Math.random() * 1000,
-      amount: Math.random() * 10,
-      timestamp: Date.now(),
-      type: Math.random() > 0.5 ? 'buy' : 'sell',
-    };
-    
-    this.trades = [newTrade, ...this.trades.slice(0, 49)];
-  }
-
-  private updateMarketData() {
-    const change = (Math.random() - 0.5) * 0.02 * this.marketData.total_market_cap;
-    this.marketData = {
-      ...this.marketData,
-      total_market_cap: Math.max(0, this.marketData.total_market_cap + change),
-      total_volume: this.marketData.total_volume * (0.8 + Math.random() * 0.4),
-      market_cap_change_percentage_24h_usd: (change / this.marketData.total_market_cap) * 100,
-    };
-  }
-
-  private updateSocialSentiment() {
-    this.socialSentiment = this.socialSentiment.map(sentiment => ({
-      ...sentiment,
-      score: Math.max(0, Math.min(100, sentiment.score + (Math.random() - 0.5) * 10)),
-      social_volume: sentiment.social_volume * (0.9 + Math.random() * 0.2),
-      social_dominance: Math.max(0, sentiment.social_dominance + (Math.random() - 0.5) * 2),
-    }));
-  }
 
   // Cleanup method
   destroy() {

@@ -189,9 +189,11 @@ export const useCryptoStore = create<CryptoState>()(
       
       // Data fetching
       fetchCryptocurrencies: async () => {
+        console.log('Store: Starting to fetch cryptocurrencies...');
         set({ isLoading: true, error: null });
         try {
           const data = await cryptoAPI.getCryptocurrencies();
+          console.log('Store: Successfully fetched cryptocurrencies:', data.length, 'coins');
           set({ 
             cryptocurrencies: data, 
             isLoading: false, 
@@ -324,6 +326,7 @@ export const useCryptoStore = create<CryptoState>()(
       // Computed values
       getFilteredCryptocurrencies: () => {
         const { cryptocurrencies, searchQuery, filterConfig } = get();
+        console.log('Store: getFilteredCryptocurrencies - input count:', cryptocurrencies.length, 'searchQuery:', searchQuery, 'filterConfig:', filterConfig);
         let filtered = [...cryptocurrencies];
         
         // Apply search filter
@@ -334,6 +337,7 @@ export const useCryptoStore = create<CryptoState>()(
               token.name.toLowerCase().includes(query) ||
               token.symbol.toLowerCase().includes(query)
           );
+          console.log('Store: After search filter:', filtered.length);
         }
         
         // Apply market cap filter
@@ -341,11 +345,13 @@ export const useCryptoStore = create<CryptoState>()(
           filtered = filtered.filter(
             token => token.market_cap >= filterConfig.marketCapRange.min!
           );
+          console.log('Store: After market cap min filter:', filtered.length);
         }
         if (filterConfig.marketCapRange.max !== null) {
           filtered = filtered.filter(
             token => token.market_cap <= filterConfig.marketCapRange.max!
           );
+          console.log('Store: After market cap max filter:', filtered.length);
         }
         
         // Apply price change filter
@@ -353,11 +359,13 @@ export const useCryptoStore = create<CryptoState>()(
           filtered = filtered.filter(
             token => token.price_change_percentage_24h >= filterConfig.priceChangeThreshold.min!
           );
+          console.log('Store: After price change min filter:', filtered.length);
         }
         if (filterConfig.priceChangeThreshold.max !== null) {
           filtered = filtered.filter(
             token => token.price_change_percentage_24h <= filterConfig.priceChangeThreshold.max!
           );
+          console.log('Store: After price change max filter:', filtered.length);
         }
         
         // Apply volume filter
@@ -365,16 +373,19 @@ export const useCryptoStore = create<CryptoState>()(
           filtered = filtered.filter(
             token => token.total_volume >= filterConfig.volumeThreshold.min!
           );
+          console.log('Store: After volume filter:', filtered.length);
         }
         
+        console.log('Store: getFilteredCryptocurrencies - final count:', filtered.length);
         return filtered;
       },
       
       getSortedCryptocurrencies: () => {
         const filtered = get().getFilteredCryptocurrencies();
         const { sortConfig } = get();
+        console.log('Store: getSortedCryptocurrencies - filtered count:', filtered.length, 'sortConfig:', sortConfig);
         
-        return [...filtered].sort((a, b) => {
+        const sorted = [...filtered].sort((a, b) => {
           let aValue: any = a[sortConfig.field];
           let bValue: any = b[sortConfig.field];
           
@@ -390,21 +401,29 @@ export const useCryptoStore = create<CryptoState>()(
             return aValue < bValue ? 1 : -1;
           }
         });
+        
+        console.log('Store: getSortedCryptocurrencies - sorted count:', sorted.length);
+        return sorted;
       },
       
       getCurrentTabData: () => {
-        const { activeTab, topGainers, topLosers, recentlyAdded, watchlist, cryptocurrencies } = get();
+        const state = get();
+        const { activeTab, topGainers, topLosers, recentlyAdded, watchlist, cryptocurrencies } = state;
+        console.log('Store: getCurrentTabData called with activeTab:', activeTab, 'cryptocurrencies count:', cryptocurrencies.length);
         
         switch (activeTab) {
           case 'gainers':
+            console.log('Store: Returning topGainers:', topGainers.length);
             return topGainers;
           case 'losers':
+            console.log('Store: Returning topLosers:', topLosers.length);
             return topLosers;
           case 'recently-added':
+            console.log('Store: Returning recentlyAdded:', recentlyAdded.length);
             return recentlyAdded;
           case 'watchlist':
             // Convert watchlist items to cryptocurrency format
-            return watchlist.map(item => ({
+            const watchlistData = watchlist.map(item => ({
               id: item.id,
               symbol: item.symbol,
               name: item.name,
@@ -433,13 +452,19 @@ export const useCryptoStore = create<CryptoState>()(
               last_updated: '',
               sparkline_in_7d: { price: [] },
             } as Cryptocurrency));
+            console.log('Store: Returning watchlist data:', watchlistData.length);
+            return watchlistData;
           case 'trending':
             // For trending, we'll use the main list but could filter by volume/change
-            return cryptocurrencies.filter(token => 
+            const trendingData = cryptocurrencies.filter(token => 
               Math.abs(token.price_change_percentage_24h) > 5
             );
+            console.log('Store: Returning trending data:', trendingData.length);
+            return trendingData;
           default:
-            return get().getSortedCryptocurrencies();
+            const sortedData = state.getSortedCryptocurrencies();
+            console.log('Store: getSortedCryptocurrencies returned:', sortedData.length, 'coins');
+            return sortedData;
         }
       },
       
