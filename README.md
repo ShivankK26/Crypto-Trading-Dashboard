@@ -119,9 +119,11 @@ src/
 Create a `.env.local` file for environment-specific configuration:
 
 ```env
-NEXT_PUBLIC_API_URL=your_api_url_here
-NEXT_PUBLIC_WS_URL=your_websocket_url_here
+COINGECKO_API_KEY=your_coingecko_api_key_here
+NEXT_PUBLIC_COINGECKO_API_URL=https://api.coingecko.com/api/v3
 ```
+
+**Note**: The application includes a demo API key for testing purposes. For production use, you should obtain your own API key from [CoinGecko](https://www.coingecko.com/en/api).
 
 ### Customization
 - Modify color scheme in `tailwind.config.js`
@@ -159,12 +161,22 @@ vercel
 
 ## 📊 Data Sources
 
-The application uses mock data that simulates real cryptocurrency market data:
-- Realistic price fluctuations
+The application uses the [CoinGecko API](https://docs.coingecko.com/v3.0.1/reference/coins-markets) for real cryptocurrency market data:
+
+### API Endpoints Used
+- **Coins List with Market Data**: `/coins/markets` - Real-time cryptocurrency prices, market cap, volume, and market data
+- **Historical Chart Data**: `/coins/{id}/market_chart` - Historical price data for interactive charts
+- **Global Market Data**: `/global` - Overall market statistics and Bitcoin/Ethereum dominance
+- **Trending Coins**: `/search/trending` - Currently trending cryptocurrencies
+- **Search**: `/search` - Search functionality for cryptocurrencies
+
+### Features
+- Real-time price data with automatic updates
+- Historical price data for multiple timeframes (1H, 24H, 7D, 30D, 90D, 1Y)
 - Market cap and volume data
-- Historical price data for charts
-- Social sentiment indicators
-- Trading activity feeds
+- Price change percentages across different time periods
+- Sparkline data for 7-day price trends
+- Fallback to mock data if API is unavailable
 
 ## 🤝 Contributing
 
