@@ -27,28 +27,28 @@ export default function MarketOverview() {
 
   const stats = [
     {
-      title: 'Total Market Cap',
+      title: 'Market Cap',
       value: formatCurrency(marketData.total_market_cap),
       change: marketData.market_cap_change_percentage_24h_usd,
       icon: DollarSign,
       color: 'text-blue-400',
     },
     {
-      title: '24h Volume',
+      title: '24h Trading Volume',
       value: formatCurrency(marketData.total_volume),
-      change: 0, // Volume change not provided in mock data
+      change: 0, // Volume change not provided in API
       icon: BarChart3,
       color: 'text-green-400',
     },
     {
-      title: 'Active Cryptocurrencies',
+      title: 'Coins',
       value: marketData.active_cryptocurrencies.toLocaleString(),
       change: 0,
       icon: Activity,
       color: 'text-purple-400',
     },
     {
-      title: 'Markets',
+      title: 'Exchanges',
       value: marketData.markets.toLocaleString(),
       change: 0,
       icon: TrendingUp,
@@ -93,6 +93,46 @@ export default function MarketOverview() {
           );
         })}
       </div>
+
+      {/* Market Dominance */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="bg-gray-900 rounded-lg p-6 border border-gray-800"
+      >
+        <h2 className="text-lg font-semibold text-white mb-4">Market Dominance</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-sm">₿</span>
+              </div>
+              <div>
+                <p className="text-white font-medium">Bitcoin</p>
+                <p className="text-sm text-gray-400">BTC</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-white font-semibold">{formatPercentage(marketData.market_cap_percentage.btc)}</p>
+            </div>
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-sm">Ξ</span>
+              </div>
+              <div>
+                <p className="text-white font-medium">Ethereum</p>
+                <p className="text-sm text-gray-400">ETH</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-white font-semibold">{formatPercentage(marketData.market_cap_percentage.eth)}</p>
+            </div>
+          </div>
+        </div>
+      </motion.div>
 
       {/* Top Movers */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

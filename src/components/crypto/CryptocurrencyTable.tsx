@@ -21,7 +21,6 @@ export default function CryptocurrencyTable() {
     addToWatchlist,
     removeFromWatchlist,
     isInWatchlist,
-    columnConfig,
     setModalState,
   } = useCryptoStore();
 
@@ -95,48 +94,32 @@ export default function CryptocurrencyTable() {
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-800">
-              {columnConfig.rank && (
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">
-                  <SortButton field="market_cap_rank">#</SortButton>
-                </th>
-              )}
-              {columnConfig.name && (
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">
-                  <SortButton field="name">Name</SortButton>
-                </th>
-              )}
-              {columnConfig.price && (
-                <th className="px-4 py-3 text-right text-sm font-medium text-gray-400">
-                  <SortButton field="current_price">Price</SortButton>
-                </th>
-              )}
-              {columnConfig.change24h && (
-                <th className="px-4 py-3 text-right text-sm font-medium text-gray-400">
-                  <SortButton field="price_change_percentage_24h">24h</SortButton>
-                </th>
-              )}
-              {columnConfig.change7d && (
-                <th className="px-4 py-3 text-right text-sm font-medium text-gray-400">
-                  <SortButton field="price_change_percentage_7d">7d</SortButton>
-                </th>
-              )}
-              {columnConfig.marketCap && (
-                <th className="px-4 py-3 text-right text-sm font-medium text-gray-400">
-                  <SortButton field="market_cap">Market Cap</SortButton>
-                </th>
-              )}
-              {columnConfig.volume && (
-                <th className="px-4 py-3 text-right text-sm font-medium text-gray-400">
-                  <SortButton field="total_volume">Volume</SortButton>
-                </th>
-              )}
-              {columnConfig.sparkline && (
-                <th className="px-4 py-3 text-center text-sm font-medium text-gray-400">
-                  7d Chart
-                </th>
-              )}
+              <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">
+                <SortButton field="market_cap_rank">#</SortButton>
+              </th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-gray-400">
+                <SortButton field="name">Coin</SortButton>
+              </th>
+              <th className="px-4 py-3 text-right text-sm font-medium text-gray-400">
+                <SortButton field="current_price">Price</SortButton>
+              </th>
+              <th className="px-4 py-3 text-right text-sm font-medium text-gray-400">
+                <SortButton field="price_change_percentage_1h_in_currency">1h</SortButton>
+              </th>
+              <th className="px-4 py-3 text-right text-sm font-medium text-gray-400">
+                <SortButton field="price_change_percentage_24h">24h</SortButton>
+              </th>
+              <th className="px-4 py-3 text-right text-sm font-medium text-gray-400">
+                <SortButton field="price_change_percentage_7d">7d</SortButton>
+              </th>
+              <th className="px-4 py-3 text-right text-sm font-medium text-gray-400">
+                <SortButton field="total_volume">24h Volume</SortButton>
+              </th>
+              <th className="px-4 py-3 text-right text-sm font-medium text-gray-400">
+                <SortButton field="market_cap">Market Cap</SortButton>
+              </th>
               <th className="px-4 py-3 text-center text-sm font-medium text-gray-400">
-                Actions
+                Last 7 Days
               </th>
             </tr>
           </thead>
@@ -152,7 +135,6 @@ export default function CryptocurrencyTable() {
                   onClick={handleTokenClick}
                   onWatchlistToggle={handleWatchlistToggle}
                   isInWatchlist={isInWatchlist}
-                  columnConfig={columnConfig}
                 />
               ))}
             </AnimatePresence>

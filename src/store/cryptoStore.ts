@@ -198,8 +198,9 @@ export const useCryptoStore = create<CryptoState>()(
             lastUpdated: Date.now() 
           });
         } catch (error) {
+          console.error('Store: Error fetching cryptocurrencies:', error);
           set({ 
-            error: error instanceof Error ? error.message : 'Failed to fetch cryptocurrencies',
+            error: error instanceof Error ? error.message : 'Failed to fetch cryptocurrencies from CoinGecko API',
             isLoading: false 
           });
         }
@@ -211,7 +212,7 @@ export const useCryptoStore = create<CryptoState>()(
           set({ marketData: data });
         } catch (error) {
           set({ 
-            error: error instanceof Error ? error.message : 'Failed to fetch market data' 
+            error: error instanceof Error ? error.message : 'Failed to fetch market data from CoinGecko API' 
           });
         }
       },
@@ -222,7 +223,7 @@ export const useCryptoStore = create<CryptoState>()(
           set({ trendingTokens: data });
         } catch (error) {
           set({ 
-            error: error instanceof Error ? error.message : 'Failed to fetch trending tokens' 
+            error: error instanceof Error ? error.message : 'Failed to fetch trending tokens from CoinGecko API' 
           });
         }
       },
@@ -233,7 +234,7 @@ export const useCryptoStore = create<CryptoState>()(
           set({ topGainers: data });
         } catch (error) {
           set({ 
-            error: error instanceof Error ? error.message : 'Failed to fetch top gainers' 
+            error: error instanceof Error ? error.message : 'Failed to fetch top gainers from CoinGecko API' 
           });
         }
       },
@@ -244,7 +245,7 @@ export const useCryptoStore = create<CryptoState>()(
           set({ topLosers: data });
         } catch (error) {
           set({ 
-            error: error instanceof Error ? error.message : 'Failed to fetch top losers' 
+            error: error instanceof Error ? error.message : 'Failed to fetch top losers from CoinGecko API' 
           });
         }
       },
@@ -255,7 +256,7 @@ export const useCryptoStore = create<CryptoState>()(
           set({ recentlyAdded: data });
         } catch (error) {
           set({ 
-            error: error instanceof Error ? error.message : 'Failed to fetch recently added tokens' 
+            error: error instanceof Error ? error.message : 'Failed to fetch recently added tokens from CoinGecko API' 
           });
         }
       },
@@ -287,7 +288,7 @@ export const useCryptoStore = create<CryptoState>()(
           return await cryptoAPI.searchCryptocurrencies(query);
         } catch (error) {
           set({ 
-            error: error instanceof Error ? error.message : 'Failed to search cryptocurrencies' 
+            error: error instanceof Error ? error.message : 'Failed to search cryptocurrencies from CoinGecko API' 
           });
           return [];
         }
@@ -441,6 +442,9 @@ export const useCryptoStore = create<CryptoState>()(
             return get().getSortedCryptocurrencies();
         }
       },
+      
+      // Expose cryptoAPI for components to use
+      cryptoAPI,
     }),
     {
       name: 'crypto-dashboard-storage',
