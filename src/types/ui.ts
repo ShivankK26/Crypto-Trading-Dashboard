@@ -1,0 +1,122 @@
+export type TabType = 'all' | 'trending' | 'gainers' | 'losers' | 'watchlist' | 'recently-added';
+
+export type SortField = 
+  | 'market_cap_rank'
+  | 'name'
+  | 'current_price'
+  | 'price_change_percentage_24h'
+  | 'price_change_percentage_7d'
+  | 'market_cap'
+  | 'total_volume';
+
+export type SortDirection = 'asc' | 'desc';
+
+export interface SortConfig {
+  field: SortField;
+  direction: SortDirection;
+}
+
+export interface FilterConfig {
+  marketCapRange: {
+    min: number | null;
+    max: number | null;
+  };
+  priceChangeThreshold: {
+    min: number | null;
+    max: number | null;
+  };
+  volumeThreshold: {
+    min: number | null;
+  };
+}
+
+export interface ColumnConfig {
+  rank: boolean;
+  name: boolean;
+  price: boolean;
+  change24h: boolean;
+  change7d: boolean;
+  marketCap: boolean;
+  volume: boolean;
+  sparkline: boolean;
+}
+
+export interface ViewportConfig {
+  isMobile: boolean;
+  isTablet: boolean;
+  isDesktop: boolean;
+  width: number;
+  height: number;
+}
+
+export interface ThemeConfig {
+  mode: 'dark' | 'light';
+  primaryColor: string;
+  accentColor: string;
+}
+
+export interface NotificationConfig {
+  priceAlerts: boolean;
+  marketUpdates: boolean;
+  volumeSpikes: boolean;
+  newListings: boolean;
+}
+
+export interface ChartConfig {
+  type: 'line' | 'candlestick';
+  timeframe: '1h' | '24h' | '7d' | '30d' | '90d' | '1y';
+  showVolume: boolean;
+  showCrosshair: boolean;
+  showGrid: boolean;
+}
+
+export interface LoadingState {
+  isLoading: boolean;
+  error: string | null;
+  lastUpdated: number | null;
+}
+
+export interface SearchState {
+  query: string;
+  suggestions: string[];
+  isSearching: boolean;
+  results: string[];
+}
+
+export interface PaginationState {
+  currentPage: number;
+  itemsPerPage: number;
+  totalItems: number;
+  totalPages: number;
+}
+
+export interface ModalState {
+  isOpen: boolean;
+  type: 'settings' | 'filters' | 'alerts' | 'token-detail' | null;
+  data: any;
+}
+
+export interface ToastState {
+  id: string;
+  type: 'success' | 'error' | 'warning' | 'info';
+  title: string;
+  description?: string;
+  duration?: number;
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
+}
+
+export interface AnimationConfig {
+  duration: number;
+  easing: string;
+  stagger: number;
+}
+
+export interface AccessibilityConfig {
+  reducedMotion: boolean;
+  highContrast: boolean;
+  fontSize: 'small' | 'medium' | 'large';
+  screenReader: boolean;
+}
