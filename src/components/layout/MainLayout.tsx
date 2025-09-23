@@ -7,6 +7,7 @@ import Navigation from './Navigation';
 import MobileNavigation from './MobileNavigation';
 import SearchBar from './SearchBar';
 import Toast from '@/components/ui/Toast';
+import FilterModal from '@/components/ui/FilterModal';
 import { useCryptoStore } from '@/store/cryptoStore';
 
 interface MainLayoutProps {
@@ -23,7 +24,9 @@ export default function MainLayout({ children }: MainLayoutProps) {
     fetchTopLosers,
     fetchRecentlyAdded,
     startRealTimeUpdates,
-    isLoading 
+    isLoading,
+    modalState,
+    setModalState
   } = useCryptoStore();
 
   useEffect(() => {
@@ -112,6 +115,12 @@ export default function MainLayout({ children }: MainLayoutProps) {
           </div>
         </motion.div>
       )}
+
+      {/* Filter Modal */}
+      <FilterModal
+        isOpen={modalState.isOpen && modalState.type === 'filters'}
+        onClose={() => setModalState({ isOpen: false, type: null, data: null })}
+      />
     </div>
   );
 }

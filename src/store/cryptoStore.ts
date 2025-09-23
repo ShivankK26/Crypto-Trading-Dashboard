@@ -75,6 +75,33 @@ interface CryptoState {
   cryptoAPI: typeof cryptoAPI;
 }
 
+// Migration function to handle existing persisted state
+const migrateFilterConfig = (config: any) => {
+  return {
+    marketCapRange: config.marketCapRange || { min: null, max: null },
+    priceChangeThreshold: config.priceChangeThreshold || { min: null, max: null },
+    volumeThreshold: config.volumeThreshold || { min: null },
+    marketCapFilters: config.marketCapFilters || {
+      largeCap: false,
+      midCap: false,
+      smallCap: false,
+    },
+    priceChangeFilters: config.priceChangeFilters || {
+      gainers10: false,
+      gainers25: false,
+      gainers50: false,
+      losers10: false,
+      losers25: false,
+      losers50: false,
+    },
+    volumeFilters: config.volumeFilters || {
+      highVolume: false,
+      mediumVolume: false,
+      lowVolume: false,
+    },
+  };
+};
+
 export const useCryptoStore = create<CryptoState>()(
   persist(
     (set, get) => ({
@@ -97,6 +124,24 @@ export const useCryptoStore = create<CryptoState>()(
         marketCapRange: { min: null, max: null },
         priceChangeThreshold: { min: null, max: null },
         volumeThreshold: { min: null },
+        marketCapFilters: {
+          largeCap: false,
+          midCap: false,
+          smallCap: false,
+        },
+        priceChangeFilters: {
+          gainers10: false,
+          gainers25: false,
+          gainers50: false,
+          losers10: false,
+          losers25: false,
+          losers50: false,
+        },
+        volumeFilters: {
+          highVolume: false,
+          mediumVolume: false,
+          lowVolume: false,
+        },
       },
       columnConfig: {
         rank: true,
@@ -403,6 +448,52 @@ export const useCryptoStore = create<CryptoState>()(
           console.log('Store: After volume filter:', filtered.length);
         }
         
+        // Apply predefined market cap filters
+        const marketCapFilters = filterConfig.marketCapFilters || { largeCap: false, midCap: false, smallCap: false };
+        if (marketCapFilters.largeCap || marketCapFilters.midCap || marketCapFilters.smallCap) {
+          filtered = filtered.filter(token => {
+            const marketCap = token.market_cap;
+            if (marketCapFilters.largeCap && marketCap > 10000000000) return true; // >$10B
+            if (marketCapFilters.midCap && marketCap >= 1000000000 && marketCap <= 10000000000) return true; // $1B-$10B
+            if (marketCapFilters.smallCap && marketCap < 1000000000) return true; // <$1B
+            return false;
+          });
+          console.log('Store: After predefined market cap filters:', filtered.length);
+        }
+        
+        // Apply predefined price change filters
+        const priceChangeFilters = filterConfig.priceChangeFilters || { 
+          gainers10: false, gainers25: false, gainers50: false, 
+          losers10: false, losers25: false, losers50: false 
+        };
+        if (priceChangeFilters.gainers10 || priceChangeFilters.gainers25 || priceChangeFilters.gainers50 ||
+            priceChangeFilters.losers10 || priceChangeFilters.losers25 || priceChangeFilters.losers50) {
+          filtered = filtered.filter(token => {
+            const change = token.price_change_percentage_24h;
+            if (priceChangeFilters.gainers10 && change > 10) return true;
+            if (priceChangeFilters.gainers25 && change > 25) return true;
+            if (priceChangeFilters.gainers50 && change > 50) return true;
+            if (priceChangeFilters.losers10 && change < -10) return true;
+            if (priceChangeFilters.losers25 && change < -25) return true;
+            if (priceChangeFilters.losers50 && change < -50) return true;
+            return false;
+          });
+          console.log('Store: After predefined price change filters:', filtered.length);
+        }
+        
+        // Apply predefined volume filters
+        const volumeFilters = filterConfig.volumeFilters || { highVolume: false, mediumVolume: false, lowVolume: false };
+        if (volumeFilters.highVolume || volumeFilters.mediumVolume || volumeFilters.lowVolume) {
+          filtered = filtered.filter(token => {
+            const volume = token.total_volume;
+            if (volumeFilters.highVolume && volume > 100000000) return true; // >$100M
+            if (volumeFilters.mediumVolume && volume >= 10000000 && volume <= 100000000) return true; // $10M-$100M
+            if (volumeFilters.lowVolume && volume < 10000000) return true; // <$10M
+            return false;
+          });
+          console.log('Store: After predefined volume filters:', filtered.length);
+        }
+        
         console.log('Store: getFilteredCryptocurrencies - final count:', filtered.length);
         return filtered;
       },
@@ -503,7 +594,7 @@ export const useCryptoStore = create<CryptoState>()(
       partialize: (state) => ({
         watchlist: state.watchlist,
         columnConfig: state.columnConfig,
-        filterConfig: state.filterConfig,
+        filterConfig: migrateFilterConfig(state.filterConfig),
       }),
     }
   )

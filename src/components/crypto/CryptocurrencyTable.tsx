@@ -30,17 +30,19 @@ export default function CryptocurrencyTable() {
     watchlist,
     searchQuery,
     filterConfig,
+    setFilterConfig,
   } = useCryptoStore();
 
   const [hoveredRow, setHoveredRow] = useState<string | null>(null);
 
   const data = useMemo(() => {
     console.log('CryptocurrencyTable: Getting current tab data, activeTab:', activeTab, 'cryptocurrencies count:', cryptocurrencies.length);
+    console.log('CryptocurrencyTable: filterConfig:', filterConfig);
     console.log('CryptocurrencyTable: cryptocurrencies data:', cryptocurrencies.slice(0, 3)); // Log first 3 items
     const result = getCurrentTabData();
     console.log('CryptocurrencyTable: getCurrentTabData returned:', result.length, 'items');
     return result;
-  }, [getCurrentTabData, activeTab, cryptocurrencies.length]);
+  }, [getCurrentTabData, activeTab, cryptocurrencies.length, filterConfig]);
 
   const handleSort = (field: SortField) => {
     setSortConfig({
@@ -66,6 +68,44 @@ export default function CryptocurrencyTable() {
     setHoveredRow(id);
   }, []);
 
+  const handleClearFilters = useCallback(() => {
+    const defaultFilters = {
+      marketCapRange: { min: null, max: null },
+      priceChangeThreshold: { min: null, max: null },
+      volumeThreshold: { min: null },
+      marketCapFilters: {
+        largeCap: false,
+        midCap: false,
+        smallCap: false,
+      },
+      priceChangeFilters: {
+        gainers10: false,
+        gainers25: false,
+        gainers50: false,
+        losers10: false,
+        losers25: false,
+        losers50: false,
+      },
+      volumeFilters: {
+        highVolume: false,
+        mediumVolume: false,
+        lowVolume: false,
+      },
+    };
+    setFilterConfig(defaultFilters);
+  }, [setFilterConfig]);
+
+  // Check if any filters are active
+  const hasActiveFilters = useMemo(() => {
+    const { marketCapFilters, priceChangeFilters, volumeFilters } = filterConfig;
+    return (
+      marketCapFilters?.largeCap || marketCapFilters?.midCap || marketCapFilters?.smallCap ||
+      priceChangeFilters?.gainers10 || priceChangeFilters?.gainers25 || priceChangeFilters?.gainers50 ||
+      priceChangeFilters?.losers10 || priceChangeFilters?.losers25 || priceChangeFilters?.losers50 ||
+      volumeFilters?.highVolume || volumeFilters?.mediumVolume || volumeFilters?.lowVolume
+    );
+  }, [filterConfig]);
+
   const SortButton = ({ field, children }: { field: SortField; children: React.ReactNode }) => (
     <button
       onClick={() => handleSort(field)}
@@ -86,11 +126,22 @@ export default function CryptocurrencyTable() {
     <div className="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden">
       {/* Table Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-800">
-        <h2 className="text-lg font-semibold text-white">Cryptocurrency Market</h2>
+        <div className="flex items-center space-x-3">
+          <h2 className="text-lg font-semibold text-white">Cryptocurrency Market</h2>
+          {hasActiveFilters && (
+            <span className="px-2 py-1 text-xs bg-blue-600 text-white rounded-full">
+              Filters Active
+            </span>
+          )}
+        </div>
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setModalState({ isOpen: true, type: 'filters', data: null })}
-            className="p-2 text-gray-400 hover:text-white transition-colors"
+            className={`p-2 transition-colors ${
+              hasActiveFilters 
+                ? 'text-blue-400 hover:text-blue-300' 
+                : 'text-gray-400 hover:text-white'
+            }`}
           >
             <Filter className="w-5 h-5" />
           </button>
@@ -158,9 +209,19 @@ export default function CryptocurrencyTable() {
 
       {/* Table Footer */}
       <div className="flex items-center justify-between p-4 border-t border-gray-800">
-        <p className="text-sm text-gray-400">
-          Showing {data.length} cryptocurrencies
-        </p>
+        <div className="flex items-center space-x-4">
+          <p className="text-sm text-gray-400">
+            Showing {data.length} cryptocurrencies
+          </p>
+          {hasActiveFilters && (
+            <button
+              onClick={handleClearFilters}
+              className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
+            >
+              Clear Filters
+            </button>
+          )}
+        </div>
         <div className="flex items-center space-x-4">
           <p className="text-sm text-gray-400">
             Last updated: {new Date().toLocaleTimeString()}

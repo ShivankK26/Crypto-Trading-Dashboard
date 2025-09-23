@@ -29,6 +29,27 @@ export interface FilterConfig {
   volumeThreshold: {
     min: number | null;
   };
+  // Predefined market cap filters
+  marketCapFilters: {
+    largeCap: boolean; // >$10B
+    midCap: boolean;   // $1B-$10B
+    smallCap: boolean; // <$1B
+  };
+  // Predefined price change filters
+  priceChangeFilters: {
+    gainers10: boolean;  // >10%
+    gainers25: boolean;  // >25%
+    gainers50: boolean;  // >50%
+    losers10: boolean;   // <-10%
+    losers25: boolean;   // <-25%
+    losers50: boolean;   // <-50%
+  };
+  // Volume filters
+  volumeFilters: {
+    highVolume: boolean; // >$100M
+    mediumVolume: boolean; // $10M-$100M
+    lowVolume: boolean;  // <$10M
+  };
 }
 
 export interface ColumnConfig {
