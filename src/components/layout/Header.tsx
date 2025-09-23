@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Search, Settings, Bell, TrendingUp, TrendingDown } from 'lucide-react';
 import { useCryptoStore } from '@/store/cryptoStore';
 import { formatCurrency, formatPercentage } from '@/lib/utils';
+import NotificationCenter from '@/components/ui/NotificationCenter';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -94,14 +95,7 @@ export default function Header() {
               <Settings className="w-5 h-5" />
             </motion.button>
             
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="p-2 text-gray-400 hover:text-white transition-colors relative"
-            >
-              <Bell className="w-5 h-5" />
-              <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
-            </motion.button>
+            <NotificationCenter />
           </div>
         </div>
       </div>

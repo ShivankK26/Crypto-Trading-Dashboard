@@ -138,6 +138,8 @@ export interface WatchlistItem {
   current_price: number;
   price_change_percentage_24h: number;
   added_at: string;
+  order: number;
+  price_alerts: PriceAlert[];
 }
 
 export interface PriceAlert {
@@ -148,6 +150,8 @@ export interface PriceAlert {
   condition: 'above' | 'below';
   is_active: boolean;
   created_at: string;
+  triggered_at?: string;
+  is_triggered: boolean;
 }
 
 export interface Trade {

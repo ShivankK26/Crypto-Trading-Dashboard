@@ -11,6 +11,7 @@ import {
 import { useCryptoStore } from '@/store/cryptoStore';
 import { SortField } from '@/types/ui';
 import CryptoTableRow from './CryptoTableRow';
+import WatchlistTable from './WatchlistTable';
 
 export default function CryptocurrencyTable() {
   const {
@@ -121,6 +122,11 @@ export default function CryptocurrencyTable() {
       )}
     </button>
   );
+
+  // Use WatchlistTable for watchlist tab
+  if (activeTab === 'watchlist') {
+    return <WatchlistTable onTokenClick={handleTokenClick} />;
+  }
 
   return (
     <div className="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden">
