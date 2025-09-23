@@ -11,7 +11,6 @@ import {
   DollarSign,
   Activity,
   Globe,
-  Calendar,
   ArrowUpRight,
   ArrowDownRight
 } from 'lucide-react';
@@ -20,11 +19,10 @@ import {
   formatCurrency, 
   formatPercentage, 
   formatMarketCap, 
-  formatVolume,
-  getPriceChangeColor 
+  formatVolume
 } from '@/lib/utils';
 import PriceChart from '@/components/charts/PriceChart';
-import { Trade, SocialSentiment } from '@/types/crypto';
+import { SocialSentiment } from '@/types/crypto';
 
 interface TokenDetailProps {
   isOpen: boolean;
@@ -98,6 +96,8 @@ export default function TokenDetail({ isOpen, onClose }: TokenDetailProps) {
                     src={selectedToken.image}
                     alt={selectedToken.name}
                     className="w-12 h-12 rounded-full"
+                    width={48}
+                    height={48}
                   />
                   <div>
                     <h2 className="text-xl font-bold text-white">{selectedToken.name}</h2>
@@ -169,7 +169,7 @@ export default function TokenDetail({ isOpen, onClose }: TokenDetailProps) {
                 ].map((tab) => (
                   <button
                     key={tab.id}
-                    onClick={() => setActiveTab(tab.id as any)}
+                    onClick={() => setActiveTab(tab.id as 'overview' | 'chart' | 'trades')}
                     className={`py-4 text-sm font-medium border-b-2 transition-colors ${
                       activeTab === tab.id
                         ? 'border-blue-500 text-blue-400'

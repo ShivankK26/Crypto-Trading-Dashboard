@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { 
   ChevronUp, 
   ChevronDown, 
@@ -36,10 +36,11 @@ export default function CryptocurrencyTable() {
 
   const data = useMemo(() => {
     console.log('CryptocurrencyTable: Getting current tab data, activeTab:', activeTab, 'cryptocurrencies count:', cryptocurrencies.length);
+    console.log('CryptocurrencyTable: cryptocurrencies data:', cryptocurrencies.slice(0, 3)); // Log first 3 items
     const result = getCurrentTabData();
     console.log('CryptocurrencyTable: getCurrentTabData returned:', result.length, 'items');
     return result;
-  }, [getCurrentTabData, activeTab, cryptocurrencies, topGainers, topLosers, recentlyAdded, watchlist, sortConfig, searchQuery, filterConfig]);
+  }, [getCurrentTabData, activeTab, cryptocurrencies.length]);
 
   const handleSort = (field: SortField) => {
     setSortConfig({
@@ -48,11 +49,11 @@ export default function CryptocurrencyTable() {
     });
   };
 
-  const handleTokenClick = useCallback((token: any) => {
+  const handleTokenClick = useCallback((token: { id: string; name: string; symbol: string; current_price: number; price_change_percentage_24h: number; market_cap_rank: number; market_cap: number; total_volume: number; price_change_24h: number; price_change_percentage_7d: number; high_24h: number; low_24h: number; market_cap_change_24h: number; market_cap_change_percentage_24h: number; fully_diluted_valuation: number; circulating_supply: number; total_supply: number; max_supply: number; ath: number; ath_change_percentage: number; ath_date: string; atl: number; atl_change_percentage: number; atl_date: string; last_updated: string; sparkline_in_7d: { price: number[] }; image: string }) => {
     setSelectedToken(token);
   }, [setSelectedToken]);
 
-  const handleWatchlistToggle = useCallback((token: any, e: React.MouseEvent) => {
+  const handleWatchlistToggle = useCallback((token: { id: string; name: string; symbol: string; current_price: number; price_change_percentage_24h: number; market_cap_rank: number; market_cap: number; total_volume: number; price_change_24h: number; price_change_percentage_7d: number; high_24h: number; low_24h: number; market_cap_change_24h: number; market_cap_change_percentage_24h: number; fully_diluted_valuation: number; circulating_supply: number; total_supply: number; max_supply: number; ath: number; ath_change_percentage: number; ath_date: string; atl: number; atl_change_percentage: number; atl_date: string; last_updated: string; sparkline_in_7d: { price: number[] }; image: string }, e: React.MouseEvent) => {
     e.stopPropagation();
     if (isInWatchlist(token.id)) {
       removeFromWatchlist(token.id);

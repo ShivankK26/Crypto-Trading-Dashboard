@@ -83,7 +83,7 @@ export function getPriceChangeBgColor(change: number): string {
   return 'bg-gray-400/10';
 }
 
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {
@@ -94,7 +94,7 @@ export function debounce<T extends (...args: any[]) => any>(
   };
 }
 
-export function throttle<T extends (...args: any[]) => any>(
+export function throttle<T extends (...args: unknown[]) => unknown>(
   func: T,
   limit: number
 ): (...args: Parameters<T>) => void {
@@ -185,7 +185,7 @@ export function copyToClipboard(text: string): Promise<void> {
   }
 }
 
-export function downloadAsCSV(data: any[], filename: string): void {
+export function downloadAsCSV(data: Record<string, unknown>[], filename: string): void {
   const csvContent = [
     Object.keys(data[0]).join(','),
     ...data.map(row => Object.values(row).join(','))

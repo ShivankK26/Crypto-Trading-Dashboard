@@ -1,9 +1,8 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { motion } from 'framer-motion';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
-import { TrendingUp, TrendingDown, BarChart3 } from 'lucide-react';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 import { useCryptoStore } from '@/store/cryptoStore';
 import { formatCurrency, formatPercentage } from '@/lib/utils';
 import { PriceData } from '@/types/crypto';
@@ -83,8 +82,8 @@ export default function PriceChart({ tokenId, timeframe, type = 'area' }: PriceC
     }
   };
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
+  const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number }>; label?: number }) => {
+    if (active && payload && payload.length && label !== undefined) {
       return (
         <div className="bg-gray-900 border border-gray-700 rounded-lg p-3 shadow-lg">
           <p className="text-sm text-gray-400 mb-1">
@@ -147,7 +146,7 @@ export default function PriceChart({ tokenId, timeframe, type = 'area' }: PriceC
           {timeframes.map((tf) => (
             <button
               key={tf.value}
-              onClick={() => setSelectedTimeframe(tf.value as any)}
+              onClick={() => setSelectedTimeframe(tf.value as '1h' | '24h' | '7d' | '30d' | '90d' | '1y')}
               className={`px-3 py-1 text-sm font-medium rounded transition-colors ${
                 selectedTimeframe === tf.value
                   ? 'bg-blue-500 text-white'
@@ -169,12 +168,12 @@ export default function PriceChart({ tokenId, timeframe, type = 'area' }: PriceC
                 <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop 
                     offset="5%" 
-                    stopColor={chartStats?.changePercent >= 0 ? '#10B981' : '#EF4444'} 
+                    stopColor={(chartStats?.changePercent ?? 0) >= 0 ? '#10B981' : '#EF4444'} 
                     stopOpacity={0.3}
                   />
                   <stop 
                     offset="95%" 
-                    stopColor={chartStats?.changePercent >= 0 ? '#10B981' : '#EF4444'} 
+                    stopColor={(chartStats?.changePercent ?? 0) >= 0 ? '#10B981' : '#EF4444'} 
                     stopOpacity={0}
                   />
                 </linearGradient>
@@ -196,7 +195,7 @@ export default function PriceChart({ tokenId, timeframe, type = 'area' }: PriceC
               <Area
                 type="monotone"
                 dataKey="price"
-                stroke={chartStats?.changePercent >= 0 ? '#10B981' : '#EF4444'}
+                stroke={(chartStats?.changePercent ?? 0) >= 0 ? '#10B981' : '#EF4444'}
                 strokeWidth={2}
                 fill="url(#priceGradient)"
               />
@@ -220,10 +219,10 @@ export default function PriceChart({ tokenId, timeframe, type = 'area' }: PriceC
               <Line
                 type="monotone"
                 dataKey="price"
-                stroke={chartStats?.changePercent >= 0 ? '#10B981' : '#EF4444'}
+                stroke={(chartStats?.changePercent ?? 0) >= 0 ? '#10B981' : '#EF4444'}
                 strokeWidth={2}
                 dot={false}
-                activeDot={{ r: 4, fill: chartStats?.changePercent >= 0 ? '#10B981' : '#EF4444' }}
+                activeDot={{ r: 4, fill: (chartStats?.changePercent ?? 0) >= 0 ? '#10B981' : '#EF4444' }}
               />
             </LineChart>
           )}

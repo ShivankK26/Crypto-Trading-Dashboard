@@ -68,6 +68,9 @@ interface CryptoState {
   getFilteredCryptocurrencies: () => Cryptocurrency[];
   getSortedCryptocurrencies: () => Cryptocurrency[];
   getCurrentTabData: () => Cryptocurrency[];
+  
+  // API instance
+  cryptoAPI: typeof cryptoAPI;
 }
 
 export const useCryptoStore = create<CryptoState>()(
@@ -194,11 +197,13 @@ export const useCryptoStore = create<CryptoState>()(
         try {
           const data = await cryptoAPI.getCryptocurrencies();
           console.log('Store: Successfully fetched cryptocurrencies:', data.length, 'coins');
+          console.log('Store: First 3 cryptocurrencies:', data.slice(0, 3)); // Log first 3 items
           set({ 
             cryptocurrencies: data, 
             isLoading: false, 
             lastUpdated: Date.now() 
           });
+          console.log('Store: After setting cryptocurrencies, current state:', get().cryptocurrencies.length, 'coins');
         } catch (error) {
           console.error('Store: Error fetching cryptocurrencies:', error);
           set({ 
@@ -386,8 +391,8 @@ export const useCryptoStore = create<CryptoState>()(
         console.log('Store: getSortedCryptocurrencies - filtered count:', filtered.length, 'sortConfig:', sortConfig);
         
         const sorted = [...filtered].sort((a, b) => {
-          let aValue: any = a[sortConfig.field];
-          let bValue: any = b[sortConfig.field];
+          let aValue: string | number = a[sortConfig.field];
+          let bValue: string | number = b[sortConfig.field];
           
           // Handle string sorting
           if (typeof aValue === 'string') {

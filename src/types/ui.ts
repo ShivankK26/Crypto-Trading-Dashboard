@@ -4,6 +4,7 @@ export type SortField =
   | 'market_cap_rank'
   | 'name'
   | 'current_price'
+  | 'price_change_percentage_1h_in_currency'
   | 'price_change_percentage_24h'
   | 'price_change_percentage_7d'
   | 'market_cap'
@@ -93,7 +94,7 @@ export interface PaginationState {
 export interface ModalState {
   isOpen: boolean;
   type: 'settings' | 'filters' | 'alerts' | 'token-detail' | null;
-  data: any;
+  data: Record<string, unknown> | null;
 }
 
 export interface ToastState {

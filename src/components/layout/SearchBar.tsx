@@ -13,10 +13,12 @@ export default function SearchBar() {
 
   // Debounced search function
   const debouncedSearch = useCallback(
-    debounce(async (query: string) => {
+    debounce((...args: unknown[]) => {
+      const query = args[0] as string;
       if (query.length > 1) {
-        const results = await searchCryptocurrencies(query);
-        setSuggestions(results.map(token => `${token.name} (${token.symbol.toUpperCase()})`));
+        searchCryptocurrencies(query).then(results => {
+          setSuggestions(results.map(token => `${token.name} (${token.symbol.toUpperCase()})`));
+        });
       } else {
         setSuggestions([]);
       }
@@ -111,7 +113,7 @@ export default function SearchBar() {
         >
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-400">
-              {suggestions.length} results for "{searchQuery}"
+              {suggestions.length} results for &quot;{searchQuery}&quot;
             </span>
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-1 text-green-400">

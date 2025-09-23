@@ -2,7 +2,6 @@
 
 import { memo } from 'react';
 import { motion } from 'framer-motion';
-import { Star } from 'lucide-react';
 import { Cryptocurrency } from '@/types/crypto';
 import { 
   formatCurrency, 
@@ -18,8 +17,8 @@ interface CryptoTableRowProps {
   isHovered: boolean;
   onHover: (id: string | null) => void;
   onClick: (token: Cryptocurrency) => void;
-  onWatchlistToggle: (token: Cryptocurrency, e: React.MouseEvent) => void;
-  isInWatchlist: (tokenId: string) => boolean;
+  onWatchlistToggle?: (token: Cryptocurrency, e: React.MouseEvent) => void;
+  isInWatchlist?: (tokenId: string) => boolean;
 }
 
 const CryptoTableRow = memo<CryptoTableRowProps>(({
@@ -28,8 +27,6 @@ const CryptoTableRow = memo<CryptoTableRowProps>(({
   isHovered,
   onHover,
   onClick,
-  onWatchlistToggle,
-  isInWatchlist,
 }) => {
   return (
     <motion.tr
@@ -57,6 +54,8 @@ const CryptoTableRow = memo<CryptoTableRowProps>(({
             alt={token.name}
             className="w-8 h-8 rounded-full"
             loading="lazy"
+            width={32}
+            height={32}
           />
           <div>
             <p className="font-medium text-white">{token.name}</p>

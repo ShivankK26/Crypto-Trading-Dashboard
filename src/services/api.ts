@@ -8,8 +8,97 @@ import {
   ChartData 
 } from '@/types/crypto';
 
+// Type definitions for CoinGecko API responses
+interface CoinGeckoCoin {
+  id: string;
+  symbol: string;
+  name: string;
+  image: string;
+  current_price: number;
+  market_cap: number;
+  market_cap_rank: number;
+  fully_diluted_valuation: number;
+  total_volume: number;
+  high_24h: number;
+  low_24h: number;
+  price_change_24h: number;
+  price_change_percentage_24h: number;
+  price_change_percentage_7d: number;
+  market_cap_change_24h: number;
+  market_cap_change_percentage_24h: number;
+  circulating_supply: number;
+  total_supply: number;
+  max_supply: number;
+  ath: number;
+  ath_change_percentage: number;
+  ath_date: string;
+  atl: number;
+  atl_change_percentage: number;
+  atl_date: string;
+  last_updated: string;
+  sparkline_in_7d?: {
+    price: number[];
+  };
+  price_change_percentage_1h_in_currency?: number;
+  price_change_percentage_24h_in_currency?: number;
+  price_change_percentage_7d_in_currency?: number;
+  price_change_percentage_30d_in_currency?: number;
+  price_change_percentage_1y_in_currency?: number;
+  price_change_percentage_1h?: number;
+  price_change_percentage_30d?: number;
+  price_change_percentage_1y?: number;
+}
+
+interface CoinGeckoTrendingCoin {
+  item: {
+    id: string;
+    symbol: string;
+    name: string;
+    thumb: string;
+    market_cap_rank: number;
+    score?: number;
+  };
+}
+
+interface CoinGeckoSearchCoin {
+  id: string;
+  symbol: string;
+  name: string;
+  thumb: string;
+}
+
+interface CoinGeckoMarketChartResponse {
+  prices: [number, number][];
+  total_volumes: [number, number][];
+}
+
+interface CoinGeckoGlobalResponse {
+  data: {
+    total_market_cap: { usd: number };
+    total_volume: { usd: number };
+    market_cap_percentage: {
+      btc: number;
+      eth: number;
+    };
+    market_cap_change_percentage_24h_usd: number;
+    active_cryptocurrencies: number;
+    markets: number;
+  };
+}
+
+interface CoinGeckoTrendingResponse {
+  coins: CoinGeckoTrendingCoin[];
+}
+
+interface CoinGeckoSearchResponse {
+  coins: CoinGeckoSearchCoin[];
+}
+
+// Union type for all possible callback data types
+type CallbackData = Cryptocurrency[] | MarketData | Trade[] | SocialSentiment[];
+
 // Helper function to make API requests through our Next.js API routes
-async function fetchFromAPI(endpoint: string, params: Record<string, any> = {}) {
+async function fetchFromAPI(endpoint: string, params: Record<string, string | number | boolean | undefined> = {}) {
   console.log('fetchFromAPI: Starting request to:', endpoint, 'with params:', params);
   const url = new URL(endpoint, window.location.origin);
   
@@ -38,7 +127,7 @@ async function fetchFromAPI(endpoint: string, params: Record<string, any> = {}) 
 }
 
 // Helper function to transform CoinGecko coin data to our format
-function transformCoinGeckoData(coin: any): Cryptocurrency {
+function transformCoinGeckoData(coin: CoinGeckoCoin): Cryptocurrency {
   console.log('API: Transforming coin data for:', coin.name, 'sparkline data:', coin.sparkline_in_7d?.price?.length || 0, 'points');
   return {
     id: coin.id,
@@ -80,7 +169,7 @@ function transformCoinGeckoData(coin: any): Cryptocurrency {
 }
 
 class CryptoAPI {
-  private subscribers: Map<string, Set<(data: any) => void>> = new Map();
+  private subscribers: Map<string, Set<(data: CallbackData) => void>> = new Map();
   private intervals: Map<string, NodeJS.Timeout> = new Map();
 
   // Get all cryptocurrencies
@@ -132,7 +221,7 @@ class CryptoAPI {
   async getTrendingTokens(): Promise<TrendingToken[]> {
     const data = await fetchFromAPI('/api/search/trending');
     
-    const trendingTokens: TrendingToken[] = data.coins.map((coin: any) => ({
+    const trendingTokens: TrendingToken[] = data.coins.map((coin: CoinGeckoTrendingCoin) => ({
       id: coin.item.id,
       symbol: coin.item.symbol,
       name: coin.item.name,
@@ -268,7 +357,7 @@ class CryptoAPI {
     });
     
     // Get the coin IDs from search results
-    const coinIds = data.coins.slice(0, 10).map((coin: any) => coin.id).join(',');
+    const coinIds = data.coins.slice(0, 10).map((coin: CoinGeckoSearchCoin) => coin.id).join(',');
     
     if (!coinIds) {
       return [];
@@ -292,7 +381,7 @@ class CryptoAPI {
   // Subscribe to real-time updates
   subscribeToUpdates(
     channel: 'prices' | 'trades' | 'market' | 'sentiment',
-    callback: (data: any) => void
+    callback: (data: CallbackData) => void
   ): () => void {
     if (!this.subscribers.has(channel)) {
       this.subscribers.set(channel, new Set());

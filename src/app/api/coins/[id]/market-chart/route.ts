@@ -5,11 +5,11 @@ const API_KEY = process.env.COINGECKO_API_KEY;
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { searchParams } = new URL(request.url);
-    const { id } = params;
+    const { id } = await params;
     
     // Build the CoinGecko API URL with query parameters
     const coingeckoUrl = new URL(`${COINGECKO_API_URL}/coins/${id}/market_chart`);

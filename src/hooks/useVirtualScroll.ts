@@ -1,27 +1,27 @@
 import { useState, useEffect, useMemo } from 'react';
 
-interface UseVirtualScrollOptions {
+interface UseVirtualScrollOptions<T> {
   itemHeight: number;
   containerHeight: number;
-  items: any[];
+  items: T[];
   overscan?: number;
 }
 
-interface VirtualScrollResult {
-  visibleItems: any[];
+interface VirtualScrollResult<T> {
+  visibleItems: T[];
   startIndex: number;
   endIndex: number;
   totalHeight: number;
   offsetY: number;
 }
 
-export function useVirtualScroll({
+export function useVirtualScroll<T>({
   itemHeight,
   containerHeight,
   items,
   overscan = 5,
-}: UseVirtualScrollOptions): VirtualScrollResult {
-  const [scrollTop, setScrollTop] = useState(0);
+}: UseVirtualScrollOptions<T>): VirtualScrollResult<T> {
+  const [scrollTop] = useState(0);
 
   const visibleRange = useMemo(() => {
     const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - overscan);
