@@ -3,6 +3,7 @@
 import MainLayout from '@/components/layout/MainLayout';
 import CryptocurrencyTable from '@/components/crypto/CryptocurrencyTable';
 import MarketOverview from '@/components/market/MarketOverview';
+import TrendingSection from '@/components/market/TrendingSection';
 import TokenDetail from '@/components/crypto/TokenDetail';
 import DataDebug from '@/components/debug/DataDebug';
 import { useCryptoStore } from '@/store/cryptoStore';
@@ -18,6 +19,9 @@ export default function Home() {
 
           {/* Market Overview */}
           <MarketOverview />
+
+          {/* Trending Section */}
+          <TrendingSection />
 
           {/* Cryptocurrency Table */}
           <CryptocurrencyTable />

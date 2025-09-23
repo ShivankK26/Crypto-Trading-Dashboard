@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Cryptocurrency, MarketData, TrendingToken, Trade, SocialSentiment, WatchlistItem } from '@/types/crypto';
+import { Cryptocurrency, MarketData, TrendingToken, TrendingData, Trade, SocialSentiment, WatchlistItem } from '@/types/crypto';
 import { TabType, SortConfig, FilterConfig, ColumnConfig, ModalState, ToastState } from '@/types/ui';
 import { cryptoAPI } from '@/services/api';
 
@@ -9,6 +9,7 @@ interface CryptoState {
   cryptocurrencies: Cryptocurrency[];
   marketData: MarketData | null;
   trendingTokens: TrendingToken[];
+  trendingData: TrendingData | null;
   topGainers: Cryptocurrency[];
   topLosers: Cryptocurrency[];
   recentlyAdded: Cryptocurrency[];
@@ -53,6 +54,7 @@ interface CryptoState {
   fetchCryptocurrencies: () => Promise<void>;
   fetchMarketData: () => Promise<void>;
   fetchTrendingTokens: () => Promise<void>;
+  fetchTrendingData: () => Promise<void>;
   fetchTopGainers: () => Promise<void>;
   fetchTopLosers: () => Promise<void>;
   fetchRecentlyAdded: () => Promise<void>;
@@ -80,6 +82,7 @@ export const useCryptoStore = create<CryptoState>()(
       cryptocurrencies: [],
       marketData: null,
       trendingTokens: [],
+      trendingData: null,
       topGainers: [],
       topLosers: [],
       recentlyAdded: [],
@@ -234,6 +237,17 @@ export const useCryptoStore = create<CryptoState>()(
           });
         }
       },
+
+      fetchTrendingData: async () => {
+        try {
+          const data = await cryptoAPI.getTrendingData();
+          set({ trendingData: data });
+        } catch (error) {
+          set({ 
+            error: error instanceof Error ? error.message : 'Failed to fetch trending data from CoinGecko API' 
+          });
+        }
+      },
       
       fetchTopGainers: async () => {
         try {
@@ -305,22 +319,30 @@ export const useCryptoStore = create<CryptoState>()(
       startRealTimeUpdates: () => {
         // Subscribe to price updates
         cryptoAPI.subscribeToUpdates('prices', (data) => {
-          set({ cryptocurrencies: data, lastUpdated: Date.now() });
+          if (Array.isArray(data) && data.length > 0 && 'symbol' in data[0]) {
+            set({ cryptocurrencies: data as Cryptocurrency[], lastUpdated: Date.now() });
+          }
         });
         
         // Subscribe to trade updates
         cryptoAPI.subscribeToUpdates('trades', (data) => {
-          set({ trades: data });
+          if (Array.isArray(data) && data.length > 0 && 'token_symbol' in data[0]) {
+            set({ trades: data as Trade[] });
+          }
         });
         
         // Subscribe to market data updates
         cryptoAPI.subscribeToUpdates('market', (data) => {
-          set({ marketData: data });
+          if (data && typeof data === 'object' && 'total_market_cap' in data) {
+            set({ marketData: data as MarketData });
+          }
         });
         
         // Subscribe to sentiment updates
         cryptoAPI.subscribeToUpdates('sentiment', (data) => {
-          set({ socialSentiment: data });
+          if (Array.isArray(data) && data.length > 0 && 'token_id' in data[0]) {
+            set({ socialSentiment: data as SocialSentiment[] });
+          }
         });
       },
       
@@ -391,11 +413,11 @@ export const useCryptoStore = create<CryptoState>()(
         console.log('Store: getSortedCryptocurrencies - filtered count:', filtered.length, 'sortConfig:', sortConfig);
         
         const sorted = [...filtered].sort((a, b) => {
-          let aValue: string | number = a[sortConfig.field];
-          let bValue: string | number = b[sortConfig.field];
+          let aValue: string | number = a[sortConfig.field] ?? 0;
+          let bValue: string | number = b[sortConfig.field] ?? 0;
           
           // Handle string sorting
-          if (typeof aValue === 'string') {
+          if (typeof aValue === 'string' && typeof bValue === 'string') {
             aValue = aValue.toLowerCase();
             bValue = bValue.toLowerCase();
           }

@@ -2,6 +2,8 @@ import {
   Cryptocurrency, 
   MarketData, 
   TrendingToken, 
+  TrendingCoin,
+  TrendingData,
   Trade, 
   SocialSentiment, 
   PriceData,
@@ -217,7 +219,7 @@ class CryptoAPI {
     };
   }
 
-  // Get trending tokens
+  // Get trending tokens (legacy method for backward compatibility)
   async getTrendingTokens(): Promise<TrendingToken[]> {
     const data = await fetchFromAPI('/api/search/trending');
     
@@ -233,6 +235,12 @@ class CryptoAPI {
     }));
     
     return trendingTokens;
+  }
+
+  // Get trending data (coins, NFTs, categories)
+  async getTrendingData(): Promise<TrendingData> {
+    const data = await fetchFromAPI('/api/trending');
+    return data;
   }
 
   // Get top gainers

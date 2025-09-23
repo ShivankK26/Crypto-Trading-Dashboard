@@ -71,6 +71,55 @@ export interface TrendingToken {
   score: number;
 }
 
+export interface TrendingCoin {
+  item: {
+    id: string;
+    coin_id: number;
+    name: string;
+    symbol: string;
+    market_cap_rank: number;
+    thumb: string;
+    small: string;
+    large: string;
+    slug: string;
+    price_btc: number;
+    score: number;
+    data?: {
+      price: number;
+      price_btc: string;
+      price_change_percentage_24h: Record<string, number>;
+      market_cap: string;
+      market_cap_btc: string;
+      total_volume: string;
+      total_volume_btc: string;
+      sparkline: string;
+      content: any;
+    };
+  };
+}
+
+export interface TrendingCategory {
+  id: number;
+  name: string;
+  market_cap_1h_change: number;
+  slug: string;
+  coins_count: number;
+  data: {
+    market_cap: number;
+    market_cap_btc: number;
+    total_volume: number;
+    total_volume_btc: number;
+    market_cap_change_percentage_24h: Record<string, number>;
+    sparkline: string;
+  };
+}
+
+export interface TrendingData {
+  coins: TrendingCoin[];
+  nfts: any[];
+  categories: TrendingCategory[];
+}
+
 export interface MarketStats {
   total_market_cap: number;
   total_volume_24h: number;
