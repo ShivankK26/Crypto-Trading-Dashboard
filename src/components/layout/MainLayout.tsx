@@ -69,7 +69,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
   ]);
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-[#0A0A0B] text-[#FFFFFF]">
       <Header />
       
       {/* Desktop Navigation */}
@@ -78,7 +78,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
       </div>
       
       {/* Search Bar */}
-      <div className="bg-gray-900 border-b border-gray-800">
+      <div className="bg-[#141416] border-b border-[#252528]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <SearchBar />
         </div>
@@ -107,11 +107,11 @@ export default function MainLayout({ children }: MainLayoutProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center"
+          className="fixed inset-0 bg-[#0A0A0B]/50 backdrop-blur-sm z-50 flex items-center justify-center"
         >
-          <div className="bg-gray-900 rounded-lg p-6 flex items-center space-x-4">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-            <span className="text-white">Loading market data...</span>
+          <div className="bg-[#1C1C1F] rounded-lg p-6 flex items-center space-x-4">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#3B82F6]"></div>
+            <span className="text-[#FFFFFF]">Loading market data...</span>
           </div>
         </motion.div>
       )}

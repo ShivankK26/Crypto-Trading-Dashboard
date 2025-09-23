@@ -31,7 +31,7 @@ export default function Navigation() {
   const { activeTab, setActiveTab, watchlist } = useCryptoStore();
 
   return (
-    <div className="bg-gray-900 border-b border-gray-800">
+    <div className="bg-[#141416] border-b border-[#252528]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex space-x-8 overflow-x-auto scrollbar-hide">
           {tabs.map((tab) => {
@@ -45,8 +45,8 @@ export default function Navigation() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`relative flex items-center space-x-2 px-4 py-4 text-sm font-medium transition-colors whitespace-nowrap ${
                   isActive
-                    ? 'text-white'
-                    : 'text-gray-400 hover:text-white'
+                    ? 'text-[#FFFFFF]'
+                    : 'text-[#E4E4E7] hover:text-[#FFFFFF]'
                 }`}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -54,14 +54,14 @@ export default function Navigation() {
                 <Icon className="w-4 h-4" />
                 <span>{tab.label}</span>
                 {count !== undefined && (
-                  <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
+                  <span className="bg-[#3B82F6] text-[#FFFFFF] text-xs px-2 py-1 rounded-full">
                     {count}
                   </span>
                 )}
                 {isActive && (
                   <motion.div
                     layoutId="activeTab"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500"
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#3B82F6]"
                     initial={false}
                     transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                   />

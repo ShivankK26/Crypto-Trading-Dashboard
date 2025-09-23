@@ -177,32 +177,32 @@ export default function WatchlistTable({ onTokenClick }: WatchlistTableProps) {
 
   if (watchlist.length === 0) {
     return (
-      <div className="bg-gray-900 rounded-lg border border-gray-800">
-        <div className="p-8 text-center">
-          <div className="text-gray-400 text-lg mb-2">No items in watchlist</div>
-          <div className="text-gray-500 text-sm">Add cryptocurrencies to your watchlist to track their prices</div>
+        <div className="bg-[#1C1C1F] rounded-lg border border-[#252528]">
+          <div className="p-8 text-center">
+            <div className="text-[#E4E4E7] text-lg mb-2">No items in watchlist</div>
+            <div className="text-[#E4E4E7]/70 text-sm">Add cryptocurrencies to your watchlist to track their prices</div>
+          </div>
         </div>
-      </div>
     );
   }
 
   return (
-    <div className="bg-gray-900 rounded-lg border border-gray-800">
+    <div className="bg-[#1C1C1F] rounded-lg border border-[#252528]">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-800">
+      <div className="flex items-center justify-between p-4 border-b border-[#252528]">
         <div className="flex items-center space-x-3">
-          <h2 className="text-lg font-semibold text-white">Watchlist</h2>
-          <span className="px-2 py-1 text-xs bg-blue-600 text-white rounded-full">
+          <h2 className="text-lg font-semibold text-[#FFFFFF]">Watchlist</h2>
+          <span className="px-2 py-1 text-xs bg-[#3B82F6] text-[#FFFFFF] rounded-full">
             {watchlist.length} items
           </span>
-          <span className="text-xs text-gray-400">
+          <span className="text-xs text-[#E4E4E7]">
             Drag items to reorder
           </span>
         </div>
         <div className="flex items-center space-x-2">
           <button
             onClick={exportWatchlistToCSV}
-            className="flex items-center space-x-2 px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center space-x-2 px-3 py-2 text-sm bg-[#3B82F6] text-[#FFFFFF] rounded-lg hover:bg-[#2563EB] transition-colors"
           >
             <Download className="w-4 h-4" />
             <span>Export CSV</span>
@@ -211,43 +211,43 @@ export default function WatchlistTable({ onTokenClick }: WatchlistTableProps) {
       </div>
 
       {/* Table */}
-      <div className="divide-y divide-gray-800">
+      <div className="divide-y divide-[#252528]">
               {/* Table Header */}
-              <div className="grid grid-cols-12 gap-4 p-4 text-sm font-medium text-gray-400 bg-gray-800/50">
+              <div className="grid grid-cols-12 gap-4 p-4 text-sm font-medium text-[#E4E4E7] bg-[#252528]/50">
                 <div className="col-span-1"></div>
                 <div className="col-span-1"></div>
                 <div className="col-span-3">
-                  <button
-                    onClick={() => handleSort('name')}
-                    className="flex items-center space-x-1 hover:text-white transition-colors"
-                  >
-                    <span>Name</span>
-                    {sortConfig.field === 'name' && (
-                      sortConfig.direction === 'asc' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
-                    )}
-                  </button>
-                </div>
-                <div className="col-span-2">
-                  <button
-                    onClick={() => handleSort('current_price')}
-                    className="flex items-center space-x-1 hover:text-white transition-colors"
-                  >
-                    <span>Price</span>
-                    {sortConfig.field === 'current_price' && (
-                      sortConfig.direction === 'asc' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
-                    )}
-                  </button>
-                </div>
-                <div className="col-span-2">
-                  <button
-                    onClick={() => handleSort('price_change_percentage_24h')}
-                    className="flex items-center space-x-1 hover:text-white transition-colors"
-                  >
-                    <span>24h Change</span>
-                    {sortConfig.field === 'price_change_percentage_24h' && (
-                      sortConfig.direction === 'asc' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
-                    )}
-                  </button>
+                    <button
+                      onClick={() => handleSort('name')}
+                      className="flex items-center space-x-1 hover:text-[#FFFFFF] transition-colors"
+                    >
+                      <span>Name</span>
+                      {sortConfig.field === 'name' && (
+                        sortConfig.direction === 'asc' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
+                  <div className="col-span-2">
+                    <button
+                      onClick={() => handleSort('current_price')}
+                      className="flex items-center space-x-1 hover:text-[#FFFFFF] transition-colors"
+                    >
+                      <span>Price</span>
+                      {sortConfig.field === 'current_price' && (
+                        sortConfig.direction === 'asc' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
+                  <div className="col-span-2">
+                    <button
+                      onClick={() => handleSort('price_change_percentage_24h')}
+                      className="flex items-center space-x-1 hover:text-[#FFFFFF] transition-colors"
+                    >
+                      <span>24h Change</span>
+                      {sortConfig.field === 'price_change_percentage_24h' && (
+                        sortConfig.direction === 'asc' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
+                      )}
+                    </button>
                 </div>
                 <div className="col-span-2">Alerts</div>
                 <div className="col-span-1">Actions</div>
@@ -269,10 +269,10 @@ export default function WatchlistTable({ onTokenClick }: WatchlistTableProps) {
                     onDrop={(e) => handleDrop(e, item.id)}
                     className={`grid grid-cols-12 gap-4 p-4 text-sm transition-all duration-200 cursor-move ${
                       isDragging 
-                        ? 'bg-gray-800 opacity-50 scale-105 shadow-lg' 
+                        ? 'bg-[#252528] opacity-50 scale-105 shadow-lg' 
                         : isDragOver 
-                          ? 'bg-blue-900/30 border-t-2 border-blue-500 transform scale-102' 
-                          : 'hover:bg-gray-800/50'
+                          ? 'bg-[#3B82F6]/20 border-t-2 border-[#3B82F6] transform scale-102' 
+                          : 'hover:bg-[#252528]/50'
                     }`}
                     onMouseEnter={() => setHoveredRow(item.id)}
                     onMouseLeave={() => setHoveredRow(null)}
@@ -281,17 +281,17 @@ export default function WatchlistTable({ onTokenClick }: WatchlistTableProps) {
                     transition={{ duration: 0.2 }}
                   >
                         {/* Drag Handle */}
-                        <div className="col-span-1 flex items-center justify-center text-gray-500 hover:text-gray-300 cursor-grab transition-colors">
+                        <div className="col-span-1 flex items-center justify-center text-[#E4E4E7] hover:text-[#FFFFFF] cursor-grab transition-colors">
                           <GripVertical className="w-4 h-4 hover:scale-110 transition-transform" />
                         </div>
 
                         {/* Alert Indicator */}
                         <div className="col-span-1 flex items-center justify-center">
                           {alertStatus.type === 'triggered' && (
-                            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" title="Alert Triggered" />
+                            <div className="w-2 h-2 bg-[#FF3B3B] rounded-full animate-pulse" title="Alert Triggered" />
                           )}
                           {alertStatus.type === 'active' && (
-                            <div className="w-2 h-2 bg-yellow-500 rounded-full" title="Active Alert" />
+                            <div className="w-2 h-2 bg-[#8B5CF6] rounded-full" title="Active Alert" />
                           )}
                         </div>
 
@@ -304,15 +304,15 @@ export default function WatchlistTable({ onTokenClick }: WatchlistTableProps) {
                             width={32}
                             height={32}
                           />
-                          <div>
-                            <div className="font-medium text-white">{item.name}</div>
-                            <div className="text-gray-400 text-xs">{item.symbol.toUpperCase()}</div>
-                          </div>
+                            <div>
+                              <div className="font-medium text-[#FFFFFF]">{item.name}</div>
+                              <div className="text-[#E4E4E7] text-xs">{item.symbol.toUpperCase()}</div>
+                            </div>
                         </div>
 
                         {/* Price */}
                         <div className="col-span-2 flex items-center">
-                          <span className="text-white font-medium">
+                          <span className="text-[#FFFFFF] font-medium">
                             {formatCurrency(item.current_price)}
                           </span>
                         </div>
@@ -320,7 +320,7 @@ export default function WatchlistTable({ onTokenClick }: WatchlistTableProps) {
                         {/* 24h Change */}
                         <div className="col-span-2 flex items-center">
                           <span className={`font-medium ${
-                            item.price_change_percentage_24h >= 0 ? 'text-green-400' : 'text-red-400'
+                            item.price_change_percentage_24h >= 0 ? 'text-[#00DC82]' : 'text-[#FF3B3B]'
                           }`}>
                             {formatPercentage(item.price_change_percentage_24h)}
                           </span>
@@ -331,15 +331,15 @@ export default function WatchlistTable({ onTokenClick }: WatchlistTableProps) {
                           {alertStatus.count > 0 && (
                             <span className={`text-xs px-2 py-1 rounded-full ${
                               alertStatus.type === 'triggered' 
-                                ? 'bg-red-500/20 text-red-400' 
-                                : 'bg-yellow-500/20 text-yellow-400'
+                                ? 'bg-[#FF3B3B]/20 text-[#FF3B3B]' 
+                                : 'bg-[#8B5CF6]/20 text-[#8B5CF6]'
                             }`}>
                               {alertStatus.count} alert{alertStatus.count > 1 ? 's' : ''}
                             </span>
                           )}
                           <button
                             onClick={() => handleAddAlert(item.id, item.symbol)}
-                            className="p-1 text-gray-400 hover:text-blue-400 transition-colors"
+                            className="p-1 text-[#E4E4E7] hover:text-[#3B82F6] transition-colors"
                             title="Add Price Alert"
                           >
                             <Plus className="w-4 h-4" />
@@ -357,14 +357,14 @@ export default function WatchlistTable({ onTokenClick }: WatchlistTableProps) {
                               current_price: item.current_price,
                               price_change_percentage_24h: item.price_change_percentage_24h,
                             })}
-                            className="p-1 text-gray-400 hover:text-white transition-colors"
+                            className="p-1 text-[#E4E4E7] hover:text-[#FFFFFF] transition-colors"
                             title="View Details"
                           >
                             <AlertTriangle className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => removeFromWatchlist(item.id)}
-                            className="p-1 text-gray-400 hover:text-red-400 transition-colors"
+                            className="p-1 text-[#E4E4E7] hover:text-[#FF3B3B] transition-colors"
                             title="Remove from Watchlist"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -407,15 +407,15 @@ function PriceAlertModal({ tokenSymbol, onClose, onCreate }: PriceAlertModalProp
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-gray-900 rounded-lg p-6 w-96 border border-gray-800">
-        <h3 className="text-lg font-semibold text-white mb-4">
+    <div className="fixed inset-0 bg-[#0A0A0B]/50 flex items-center justify-center z-50">
+      <div className="bg-[#1C1C1F] rounded-lg p-6 w-96 border border-[#252528]">
+        <h3 className="text-lg font-semibold text-[#FFFFFF] mb-4">
           Add Price Alert for {tokenSymbol.toUpperCase()}
         </h3>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-[#E4E4E7] mb-2">
               Target Price
             </label>
             <input
@@ -424,14 +424,14 @@ function PriceAlertModal({ tokenSymbol, onClose, onCreate }: PriceAlertModalProp
               min="0"
               value={targetPrice}
               onChange={(e) => setTargetPrice(e.target.value)}
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-[#252528] border border-[#252528] rounded-lg text-[#FFFFFF] focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
               placeholder="Enter target price"
               required
             />
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-[#E4E4E7] mb-2">
               Condition
             </label>
             <div className="flex space-x-4">
@@ -443,7 +443,7 @@ function PriceAlertModal({ tokenSymbol, onClose, onCreate }: PriceAlertModalProp
                   onChange={(e) => setCondition(e.target.value as 'above' | 'below')}
                   className="mr-2"
                 />
-                <span className="text-white">Above</span>
+                <span className="text-[#FFFFFF]">Above</span>
               </label>
               <label className="flex items-center">
                 <input
@@ -453,7 +453,7 @@ function PriceAlertModal({ tokenSymbol, onClose, onCreate }: PriceAlertModalProp
                   onChange={(e) => setCondition(e.target.value as 'above' | 'below')}
                   className="mr-2"
                 />
-                <span className="text-white">Below</span>
+                <span className="text-[#FFFFFF]">Below</span>
               </label>
             </div>
           </div>
@@ -461,14 +461,14 @@ function PriceAlertModal({ tokenSymbol, onClose, onCreate }: PriceAlertModalProp
           <div className="flex space-x-3 pt-4">
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="flex-1 px-4 py-2 bg-[#3B82F6] text-[#FFFFFF] rounded-lg hover:bg-[#2563EB] transition-colors"
             >
               Create Alert
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
+              className="flex-1 px-4 py-2 bg-[#252528] text-[#FFFFFF] rounded-lg hover:bg-[#1C1C1F] transition-colors"
             >
               Cancel
             </button>

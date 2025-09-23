@@ -2,14 +2,23 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, X, TrendingUp, TrendingDown } from 'lucide-react';
+import { Search, X, TrendingUp, TrendingDown, Star, Eye } from 'lucide-react';
 import { useCryptoStore } from '@/store/cryptoStore';
-import { debounce } from '@/lib/utils';
+import { debounce, formatCurrency, formatPercentage } from '@/lib/utils';
+import { Cryptocurrency } from '@/types/crypto';
 
 export default function SearchBar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const { searchQuery, setSearchQuery, cryptocurrencies, searchCryptocurrencies } = useCryptoStore();
+  const [suggestions, setSuggestions] = useState<Cryptocurrency[]>([]);
+  const { 
+    searchQuery, 
+    setSearchQuery, 
+    cryptocurrencies, 
+    searchCryptocurrencies,
+    setSelectedToken,
+    addToWatchlist,
+    watchlist
+  } = useCryptoStore();
 
   // Debounced search function
   const debouncedSearch = useCallback(
@@ -17,7 +26,7 @@ export default function SearchBar() {
       const query = args[0] as string;
       if (query.length > 1) {
         searchCryptocurrencies(query).then(results => {
-          setSuggestions(results.map(token => `${token.name} (${token.symbol.toUpperCase()})`));
+          setSuggestions(results);
         });
       } else {
         setSuggestions([]);
@@ -38,19 +47,20 @@ export default function SearchBar() {
     setSearchQuery(e.target.value);
   };
 
-  const handleSuggestionClick = (suggestion: string) => {
-    const match = suggestion.match(/^(.+?)\s\((.+?)\)$/);
-    if (match) {
-      const [, name, symbol] = match;
-      const token = cryptocurrencies.find(
-        t => t.name === name && t.symbol.toUpperCase() === symbol
-      );
-      if (token) {
-        setSearchQuery('');
-        setSuggestions([]);
-        // You could add logic here to select the token
-      }
-    }
+  const handleSuggestionClick = (token: Cryptocurrency) => {
+    setSelectedToken(token);
+    setSearchQuery('');
+    setSuggestions([]);
+    setIsOpen(false);
+  };
+
+  const handleAddToWatchlist = (e: React.MouseEvent, token: Cryptocurrency) => {
+    e.stopPropagation();
+    addToWatchlist(token);
+  };
+
+  const isInWatchlist = (tokenId: string) => {
+    return watchlist.some(item => item.id === tokenId);
   };
 
   const clearSearch = () => {
@@ -61,7 +71,7 @@ export default function SearchBar() {
   return (
     <div className="relative">
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#E4E4E7]" />
         <input
           type="text"
           placeholder="Search cryptocurrencies..."
@@ -69,12 +79,12 @@ export default function SearchBar() {
           onChange={handleInputChange}
           onFocus={() => setIsOpen(true)}
           onBlur={() => setTimeout(() => setIsOpen(false), 200)}
-          className="w-full pl-10 pr-10 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full pl-10 pr-10 py-2 bg-[#252528] border border-[#252528] rounded-lg text-[#FFFFFF] placeholder-[#E4E4E7] focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-transparent"
         />
         {searchQuery && (
           <button
             onClick={clearSearch}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#E4E4E7] hover:text-[#FFFFFF]"
           >
             <X className="w-4 h-4" />
           </button>
@@ -87,17 +97,59 @@ export default function SearchBar() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute top-full left-0 right-0 mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto"
+            className="absolute top-full left-0 right-0 mt-1 bg-[#1C1C1F] border border-[#252528] rounded-lg shadow-xl z-50 max-h-80 overflow-y-auto"
           >
-            {suggestions.map((suggestion, index) => (
+            {suggestions.map((token, index) => (
               <motion.button
-                key={index}
-                onClick={() => handleSuggestionClick(suggestion)}
-                className="w-full px-4 py-2 text-left text-white hover:bg-gray-700 transition-colors flex items-center space-x-2"
-                whileHover={{ backgroundColor: 'rgba(55, 65, 81, 0.5)' }}
+                key={token.id}
+                onClick={() => handleSuggestionClick(token)}
+                className="w-full px-4 py-3 text-left text-[#FFFFFF] hover:bg-[#252528] transition-colors border-b border-[#252528] last:border-b-0"
+                whileHover={{ backgroundColor: 'rgba(37, 37, 40, 0.5)' }}
               >
-                <Search className="w-4 h-4 text-gray-400" />
-                <span>{suggestion}</span>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <img
+                      src={token.image}
+                      alt={token.name}
+                      className="w-8 h-8 rounded-full"
+                      width={32}
+                      height={32}
+                    />
+                    <div className="flex flex-col">
+                      <div className="flex items-center space-x-2">
+                        <span className="font-medium text-[#FFFFFF]">{token.name}</span>
+                        <span className="text-[#E4E4E7] text-sm">{token.symbol.toUpperCase()}</span>
+                        {token.market_cap_rank && (
+                          <span className="text-[#E4E4E7]/70 text-xs">#{token.market_cap_rank}</span>
+                        )}
+                      </div>
+                      <div className="flex items-center space-x-4 text-sm">
+                        <span className="text-[#FFFFFF] font-medium">
+                          {formatCurrency(token.current_price)}
+                        </span>
+                        <span className={`font-medium ${
+                          token.price_change_percentage_24h >= 0 ? 'text-[#00DC82]' : 'text-[#FF3B3B]'
+                        }`}>
+                          {formatPercentage(token.price_change_percentage_24h)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={(e) => handleAddToWatchlist(e, token)}
+                      className={`p-1 rounded-full transition-colors ${
+                        isInWatchlist(token.id)
+                          ? 'text-[#8B5CF6] bg-[#8B5CF6]/20'
+                          : 'text-[#E4E4E7] hover:text-[#3B82F6] hover:bg-[#3B82F6]/20'
+                      }`}
+                      title={isInWatchlist(token.id) ? 'Remove from watchlist' : 'Add to watchlist'}
+                    >
+                      <Star className={`w-4 h-4 ${isInWatchlist(token.id) ? 'fill-current' : ''}`} />
+                    </button>
+                    <Eye className="w-4 h-4 text-[#E4E4E7]" />
+                  </div>
+                </div>
               </motion.button>
             ))}
           </motion.div>
@@ -105,24 +157,24 @@ export default function SearchBar() {
       </AnimatePresence>
 
       {/* Quick Stats */}
-      {searchQuery && (
+      {searchQuery && suggestions.length > 0 && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="absolute top-full left-0 right-0 mt-1 bg-gray-800 border border-gray-700 rounded-lg p-4"
+          className="absolute top-full left-0 right-0 mt-1 bg-[#1C1C1F] border border-[#252528] rounded-lg p-4"
         >
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-400">
-              {suggestions.length} results for &quot;{searchQuery}&quot;
+            <span className="text-[#E4E4E7]">
+              {suggestions.length} result{suggestions.length !== 1 ? 's' : ''} for &quot;{searchQuery}&quot;
             </span>
             <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-1 text-green-400">
+              <div className="flex items-center space-x-1 text-[#00DC82]">
                 <TrendingUp className="w-3 h-3" />
-                <span>+{Math.floor(Math.random() * 20)}%</span>
+                <span>+{suggestions.filter(t => t.price_change_percentage_24h > 0).length}</span>
               </div>
-              <div className="flex items-center space-x-1 text-red-400">
+              <div className="flex items-center space-x-1 text-[#FF3B3B]">
                 <TrendingDown className="w-3 h-3" />
-                <span>-{Math.floor(Math.random() * 10)}%</span>
+                <span>-{suggestions.filter(t => t.price_change_percentage_24h < 0).length}</span>
               </div>
             </div>
           </div>

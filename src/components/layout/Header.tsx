@@ -26,8 +26,8 @@ export default function Header() {
       animate={{ y: 0 }}
       className={`sticky top-0 z-50 transition-all duration-300 ${
         isScrolled 
-          ? 'bg-black/80 backdrop-blur-md border-b border-gray-800' 
-          : 'bg-black'
+          ? 'bg-[#0A0A0B]/80 backdrop-blur-md border-b border-[#252528]' 
+          : 'bg-[#0A0A0B]'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -38,10 +38,10 @@ export default function Header() {
               whileHover={{ scale: 1.05 }}
               className="flex items-center space-x-2"
             >
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-white" />
+              <div className="w-8 h-8 bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] rounded-lg flex items-center justify-center">
+                <TrendingUp className="w-5 h-5 text-[#FFFFFF]" />
               </div>
-              <h1 className="text-xl font-bold text-white">CryptoDash</h1>
+              <h1 className="text-xl font-bold text-[#FFFFFF]">CryptoDash</h1>
             </motion.div>
           </div>
 
@@ -49,23 +49,23 @@ export default function Header() {
           {marketData && (
             <div className="hidden lg:flex items-center space-x-6">
               <div className="text-center">
-                <p className="text-xs text-gray-400">Market Cap</p>
-                <p className="text-sm font-semibold text-white">
+                <p className="text-xs text-[#E4E4E7]">Market Cap</p>
+                <p className="text-sm font-semibold text-[#FFFFFF]">
                   {formatCurrency(marketData.total_market_cap)}
                 </p>
               </div>
               <div className="text-center">
-                <p className="text-xs text-gray-400">24h Volume</p>
-                <p className="text-sm font-semibold text-white">
+                <p className="text-xs text-[#E4E4E7]">24h Volume</p>
+                <p className="text-sm font-semibold text-[#FFFFFF]">
                   {formatCurrency(marketData.total_volume)}
                 </p>
               </div>
               <div className="text-center">
-                <p className="text-xs text-gray-400">24h Change</p>
+                <p className="text-xs text-[#E4E4E7]">24h Change</p>
                 <p className={`text-sm font-semibold flex items-center justify-center ${
                   marketData.market_cap_change_percentage_24h_usd >= 0 
-                    ? 'text-green-400' 
-                    : 'text-red-400'
+                    ? 'text-[#00DC82]' 
+                    : 'text-[#FF3B3B]'
                 }`}>
                   {marketData.market_cap_change_percentage_24h_usd >= 0 ? (
                     <TrendingUp className="w-3 h-3 mr-1" />
@@ -76,8 +76,8 @@ export default function Header() {
                 </p>
               </div>
               <div className="text-center">
-                <p className="text-xs text-gray-400">BTC Dominance</p>
-                <p className="text-sm font-semibold text-white">
+                <p className="text-xs text-[#E4E4E7]">BTC Dominance</p>
+                <p className="text-sm font-semibold text-[#FFFFFF]">
                   {marketData.market_cap_percentage.btc.toFixed(1)}%
                 </p>
               </div>
@@ -90,7 +90,7 @@ export default function Header() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setModalState({ isOpen: true, type: 'settings', data: null })}
-              className="p-2 text-gray-400 hover:text-white transition-colors"
+              className="p-2 text-[#E4E4E7] hover:text-[#FFFFFF] transition-colors"
             >
               <Settings className="w-5 h-5" />
             </motion.button>
