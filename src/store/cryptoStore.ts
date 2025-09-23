@@ -82,7 +82,7 @@ interface CryptoState {
 }
 
 // Migration function to handle existing persisted state
-const migrateFilterConfig = (config: any) => {
+const migrateFilterConfig = (config: Partial<FilterConfig>) => {
   return {
     marketCapRange: config.marketCapRange || { min: null, max: null },
     priceChangeThreshold: config.priceChangeThreshold || { min: null, max: null },
@@ -109,16 +109,19 @@ const migrateFilterConfig = (config: any) => {
 };
 
 // Migration function to handle existing watchlist items
-const migrateWatchlist = (watchlist: any[]) => {
+const migrateWatchlist = (watchlist: unknown[]) => {
   if (!Array.isArray(watchlist)) {
     return [];
   }
   
-  return watchlist.map((item, index) => ({
-    ...item,
-    order: item.order !== undefined ? item.order : index,
-    price_alerts: item.price_alerts || [],
-  }));
+  return watchlist.map((item, index) => {
+    const watchlistItem = item as Record<string, unknown>;
+    return {
+      ...watchlistItem,
+      order: watchlistItem.order !== undefined ? watchlistItem.order : index,
+      price_alerts: watchlistItem.price_alerts || [],
+    };
+  });
 };
 
 export const useCryptoStore = create<CryptoState>()(

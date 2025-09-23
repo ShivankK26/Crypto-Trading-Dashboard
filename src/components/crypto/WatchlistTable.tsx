@@ -15,11 +15,11 @@ import {
 } from 'lucide-react';
 import { useCryptoStore } from '@/store/cryptoStore';
 import { SortField } from '@/types/ui';
-import { WatchlistItem, PriceAlert } from '@/types/crypto';
+import { WatchlistItem, PriceAlert, Cryptocurrency } from '@/types/crypto';
 import { formatCurrency, formatPercentage } from '@/lib/utils';
 
 interface WatchlistTableProps {
-  onTokenClick: (token: any) => void;
+  onTokenClick: (token: WatchlistItem) => void;
 }
 
 export default function WatchlistTable({ onTokenClick }: WatchlistTableProps) {
@@ -262,11 +262,6 @@ export default function WatchlistTable({ onTokenClick }: WatchlistTableProps) {
                 return (
                   <motion.div
                     key={item.id}
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, item.id)}
-                    onDragOver={(e) => handleDragOver(e, item.id)}
-                    onDragLeave={handleDragLeave}
-                    onDrop={(e) => handleDrop(e, item.id)}
                     className={`grid grid-cols-12 gap-4 p-4 text-sm transition-all duration-200 cursor-move ${
                       isDragging 
                         ? 'bg-[#252528] opacity-50 scale-105 shadow-lg' 
@@ -281,7 +276,14 @@ export default function WatchlistTable({ onTokenClick }: WatchlistTableProps) {
                     transition={{ duration: 0.2 }}
                   >
                         {/* Drag Handle */}
-                        <div className="col-span-1 flex items-center justify-center text-[#E4E4E7] hover:text-[#FFFFFF] cursor-grab transition-colors">
+                        <div 
+                          className="col-span-1 flex items-center justify-center text-[#E4E4E7] hover:text-[#FFFFFF] cursor-grab transition-colors"
+                          draggable
+                          onDragStart={(e: React.DragEvent<HTMLDivElement>) => handleDragStart(e, item.id)}
+                          onDragOver={(e: React.DragEvent<HTMLDivElement>) => handleDragOver(e, item.id)}
+                          onDragLeave={handleDragLeave}
+                          onDrop={(e: React.DragEvent<HTMLDivElement>) => handleDrop(e, item.id)}
+                        >
                           <GripVertical className="w-4 h-4 hover:scale-110 transition-transform" />
                         </div>
 
@@ -349,14 +351,7 @@ export default function WatchlistTable({ onTokenClick }: WatchlistTableProps) {
                         {/* Actions */}
                         <div className="col-span-1 flex items-center space-x-2">
                           <button
-                            onClick={() => onTokenClick({
-                              id: item.id,
-                              symbol: item.symbol,
-                              name: item.name,
-                              image: item.image,
-                              current_price: item.current_price,
-                              price_change_percentage_24h: item.price_change_percentage_24h,
-                            })}
+                            onClick={() => onTokenClick(item)}
                             className="p-1 text-[#E4E4E7] hover:text-[#FFFFFF] transition-colors"
                             title="View Details"
                           >

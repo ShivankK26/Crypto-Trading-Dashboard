@@ -116,7 +116,7 @@ export default function NotificationCenter() {
                             {toast.description}
                           </p>
                           <p className="text-xs text-[#E4E4E7]/70 mt-2">
-                            {new Date(toast.createdAt).toLocaleTimeString()}
+                            {toast.createdAt ? new Date(toast.createdAt).toLocaleTimeString() : 'Just now'}
                           </p>
                         </div>
                         <button

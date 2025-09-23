@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useCryptoStore } from '@/store/cryptoStore';
 import { SortField } from '@/types/ui';
+import { WatchlistItem, Cryptocurrency } from '@/types/crypto';
 import CryptoTableRow from './CryptoTableRow';
 import WatchlistTable from './WatchlistTable';
 
@@ -52,11 +53,19 @@ export default function CryptocurrencyTable() {
     });
   };
 
-  const handleTokenClick = useCallback((token: { id: string; name: string; symbol: string; current_price: number; price_change_percentage_24h: number; market_cap_rank: number; market_cap: number; total_volume: number; price_change_24h: number; price_change_percentage_7d: number; high_24h: number; low_24h: number; market_cap_change_24h: number; market_cap_change_percentage_24h: number; fully_diluted_valuation: number; circulating_supply: number; total_supply: number; max_supply: number; ath: number; ath_change_percentage: number; ath_date: string; atl: number; atl_change_percentage: number; atl_date: string; last_updated: string; sparkline_in_7d: { price: number[] }; image: string }) => {
+  const handleTokenClick = useCallback((token: Cryptocurrency) => {
     setSelectedToken(token);
   }, [setSelectedToken]);
 
-  const handleWatchlistToggle = useCallback((token: { id: string; name: string; symbol: string; current_price: number; price_change_percentage_24h: number; market_cap_rank: number; market_cap: number; total_volume: number; price_change_24h: number; price_change_percentage_7d: number; high_24h: number; low_24h: number; market_cap_change_24h: number; market_cap_change_percentage_24h: number; fully_diluted_valuation: number; circulating_supply: number; total_supply: number; max_supply: number; ath: number; ath_change_percentage: number; ath_date: string; atl: number; atl_change_percentage: number; atl_date: string; last_updated: string; sparkline_in_7d: { price: number[] }; image: string }, e: React.MouseEvent) => {
+  const handleWatchlistTokenClick = useCallback((watchlistItem: WatchlistItem) => {
+    // Find the full cryptocurrency data from the main list
+    const fullToken = cryptocurrencies.find(crypto => crypto.id === watchlistItem.id);
+    if (fullToken) {
+      setSelectedToken(fullToken);
+    }
+  }, [cryptocurrencies, setSelectedToken]);
+
+  const handleWatchlistToggle = useCallback((token: Cryptocurrency, e: React.MouseEvent) => {
     e.stopPropagation();
     if (isInWatchlist(token.id)) {
       removeFromWatchlist(token.id);
@@ -125,7 +134,7 @@ export default function CryptocurrencyTable() {
 
   // Use WatchlistTable for watchlist tab
   if (activeTab === 'watchlist') {
-    return <WatchlistTable onTokenClick={handleTokenClick} />;
+    return <WatchlistTable onTokenClick={handleWatchlistTokenClick} />;
   }
 
   return (

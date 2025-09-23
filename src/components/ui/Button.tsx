@@ -28,6 +28,14 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       lg: 'px-6 py-3 text-base',
     };
 
+    // Filter out conflicting event props between HTML and Framer Motion
+    const { 
+      onDrag, onDragEnd, onDragStart, onDragOver, onDragLeave, onDrop,
+      onAnimationStart, onAnimationEnd, onAnimationIteration,
+      onTransitionEnd, onTransitionStart,
+      ...motionProps 
+    } = props;
+
     return (
       <motion.button
         ref={ref}
@@ -35,7 +43,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={disabled || isLoading}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        {...props}
+        {...motionProps}
       >
         {isLoading ? (
           <div className="flex items-center space-x-2">

@@ -124,6 +124,8 @@ export interface ToastState {
   title: string;
   description?: string;
   duration?: number;
+  read?: boolean;
+  createdAt?: string;
   action?: {
     label: string;
     onClick: () => void;
