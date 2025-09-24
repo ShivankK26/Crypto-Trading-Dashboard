@@ -347,15 +347,27 @@ class CryptoAPI {
   }
 
   // Get recent trades
-  async getRecentTrades(): Promise<Trade[]> {
-    // Return empty array since we don't have real trade data
-    return [];
+  async getRecentTrades(tokenSymbol?: string): Promise<Trade[]> {
+    // Import mock data for trades
+    const { generateMockTrades, generateTokenSpecificTrades } = await import('@/services/mockData');
+    
+    if (tokenSymbol) {
+      return generateTokenSpecificTrades(tokenSymbol);
+    }
+    
+    return generateMockTrades();
   }
 
   // Get social sentiment
-  async getSocialSentiment(): Promise<SocialSentiment[]> {
-    // Return empty array since we don't have real sentiment data
-    return [];
+  async getSocialSentiment(tokenId?: string): Promise<SocialSentiment[]> {
+    // Import mock data for social sentiment
+    const { generateSocialSentiment, generateTokenSpecificSentiment } = await import('@/services/mockData');
+    
+    if (tokenId) {
+      return [generateTokenSpecificSentiment(tokenId)];
+    }
+    
+    return generateSocialSentiment();
   }
 
   // Search cryptocurrencies

@@ -63,8 +63,8 @@ interface CryptoState {
   fetchTopGainers: () => Promise<void>;
   fetchTopLosers: () => Promise<void>;
   fetchRecentlyAdded: () => Promise<void>;
-  fetchTrades: () => Promise<void>;
-  fetchSocialSentiment: () => Promise<void>;
+  fetchTrades: (tokenSymbol?: string) => Promise<void>;
+  fetchSocialSentiment: (tokenId?: string) => Promise<void>;
   searchCryptocurrencies: (query: string) => Promise<Cryptocurrency[]>;
   
   // Real-time updates
@@ -187,7 +187,14 @@ export const useCryptoStore = create<CryptoState>()(
       // Actions
       setActiveTab: (tab) => set({ activeTab: tab }),
       
-      setSelectedToken: (token) => set({ selectedToken: token }),
+      setSelectedToken: (token) => {
+        set({ selectedToken: token });
+        // Fetch trades and social sentiment when a token is selected
+        if (token) {
+          get().fetchTrades(token.symbol);
+          get().fetchSocialSentiment(token.id);
+        }
+      },
       
       setSearchQuery: (query) => set({ searchQuery: query }),
       
@@ -469,9 +476,9 @@ export const useCryptoStore = create<CryptoState>()(
         }
       },
       
-      fetchTrades: async () => {
+      fetchTrades: async (tokenSymbol?: string) => {
         try {
-          const data = await cryptoAPI.getRecentTrades();
+          const data = await cryptoAPI.getRecentTrades(tokenSymbol);
           set({ trades: data });
         } catch (error) {
           set({ 
@@ -480,9 +487,9 @@ export const useCryptoStore = create<CryptoState>()(
         }
       },
       
-      fetchSocialSentiment: async () => {
+      fetchSocialSentiment: async (tokenId?: string) => {
         try {
-          const data = await cryptoAPI.getSocialSentiment();
+          const data = await cryptoAPI.getSocialSentiment(tokenId);
           set({ socialSentiment: data });
         } catch (error) {
           set({ 

@@ -263,20 +263,70 @@ export function generateTrendingTokens(): TrendingToken[] {
 
 // Generate mock trades
 export function generateMockTrades(): Trade[] {
-  const symbols = ['BTC', 'ETH', 'SOL', 'ADA', 'DOT'];
+  const symbols = ['BTC', 'ETH', 'SOL', 'ADA', 'DOT', 'BNB', 'XRP', 'AVAX', 'LINK', 'MATIC'];
   const trades: Trade[] = [];
+  
+  // Define realistic price ranges for each symbol
+  const priceRanges: Record<string, { min: number; max: number }> = {
+    'BTC': { min: 60000, max: 70000 },
+    'ETH': { min: 3000, max: 3500 },
+    'SOL': { min: 90, max: 120 },
+    'ADA': { min: 0.4, max: 0.6 },
+    'DOT': { min: 5, max: 8 },
+    'BNB': { min: 550, max: 650 },
+    'XRP': { min: 0.5, max: 0.7 },
+    'AVAX': { min: 30, max: 45 },
+    'LINK': { min: 12, max: 18 },
+    'MATIC': { min: 0.6, max: 1.0 },
+  };
   
   for (let i = 0; i < 50; i++) {
     const symbol = symbols[Math.floor(Math.random() * symbols.length)];
-    const price = Math.random() * 1000;
-    const amount = Math.random() * 10;
+    const range = priceRanges[symbol] || { min: 1, max: 100 };
+    const price = range.min + Math.random() * (range.max - range.min);
+    const amount = Math.random() * 10 + 0.1; // 0.1 to 10.1
     
     trades.push({
       id: `trade-${i}`,
       token_symbol: symbol,
-      price,
-      amount,
+      price: Math.round(price * 100) / 100, // Round to 2 decimal places
+      amount: Math.round(amount * 1000) / 1000, // Round to 3 decimal places
       timestamp: Date.now() - Math.random() * 3600000, // Last hour
+      type: Math.random() > 0.5 ? 'buy' : 'sell',
+    });
+  }
+  
+  return trades.sort((a, b) => b.timestamp - a.timestamp);
+}
+
+// Generate token-specific mock trades
+export function generateTokenSpecificTrades(tokenSymbol: string): Trade[] {
+  const priceRanges: Record<string, { min: number; max: number }> = {
+    'BTC': { min: 60000, max: 70000 },
+    'ETH': { min: 3000, max: 3500 },
+    'SOL': { min: 90, max: 120 },
+    'ADA': { min: 0.4, max: 0.6 },
+    'DOT': { min: 5, max: 8 },
+    'BNB': { min: 550, max: 650 },
+    'XRP': { min: 0.5, max: 0.7 },
+    'AVAX': { min: 30, max: 45 },
+    'LINK': { min: 12, max: 18 },
+    'MATIC': { min: 0.6, max: 1.0 },
+  };
+  
+  const range = priceRanges[tokenSymbol.toUpperCase()] || { min: 1, max: 100 };
+  const trades: Trade[] = [];
+  
+  for (let i = 0; i < 20; i++) {
+    const price = range.min + Math.random() * (range.max - range.min);
+    const amount = Math.random() * 10 + 0.1;
+    
+    trades.push({
+      id: `trade-${tokenSymbol.toLowerCase()}-${i}`,
+      token_symbol: tokenSymbol.toUpperCase(),
+      price: Math.round(price * 100) / 100,
+      amount: Math.round(amount * 1000) / 1000,
+      timestamp: Date.now() - Math.random() * 3600000,
       type: Math.random() > 0.5 ? 'buy' : 'sell',
     });
   }
@@ -286,15 +336,34 @@ export function generateMockTrades(): Trade[] {
 
 // Generate social sentiment data
 export function generateSocialSentiment(): SocialSentiment[] {
-  const tokens = ['bitcoin', 'ethereum', 'solana', 'cardano', 'polkadot'];
+  const tokens = ['bitcoin', 'ethereum', 'solana', 'cardano', 'polkadot', 'binancecoin', 'xrp', 'avalanche-2', 'chainlink', 'polkadot'];
   
-  return tokens.map(tokenId => ({
+  return tokens.map(tokenId => {
+    const sentiment = ['bullish', 'neutral', 'bearish'][Math.floor(Math.random() * 3)] as 'bullish' | 'neutral' | 'bearish';
+    const score = Math.random() * 100;
+    
+    return {
+      token_id: tokenId,
+      sentiment,
+      score: Math.round(score * 10) / 10, // Round to 1 decimal place
+      social_volume: Math.round(Math.random() * 10000),
+      social_dominance: Math.round(Math.random() * 20 * 10) / 10, // Round to 1 decimal place
+    };
+  });
+}
+
+// Generate token-specific social sentiment
+export function generateTokenSpecificSentiment(tokenId: string): SocialSentiment {
+  const sentiment = ['bullish', 'neutral', 'bearish'][Math.floor(Math.random() * 3)] as 'bullish' | 'neutral' | 'bearish';
+  const score = Math.random() * 100;
+  
+  return {
     token_id: tokenId,
-    sentiment: ['bullish', 'neutral', 'bearish'][Math.floor(Math.random() * 3)] as 'bullish' | 'neutral' | 'bearish',
-    score: Math.random() * 100,
-    social_volume: Math.random() * 10000,
-    social_dominance: Math.random() * 20,
-  }));
+    sentiment,
+    score: Math.round(score * 10) / 10,
+    social_volume: Math.round(Math.random() * 10000),
+    social_dominance: Math.round(Math.random() * 20 * 10) / 10,
+  };
 }
 
 // Generate historical price data for charts
