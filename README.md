@@ -121,40 +121,6 @@ src/
 - **Interactive Tooltips**: Detailed price information on hover/touch
 - **Performance**: Optimized rendering for smooth 60fps animations
 
-## 🎨 Design System
-
-### Color Palette
-- **Background**: Deep blacks (#0A0A0B, #141416)
-- **Surface**: Dark grays (#1C1C1F, #252528)
-- **Success**: Vibrant green (#00DC82)
-- **Danger**: Bright red (#FF3B3B)
-- **Text**: High contrast whites (#FFFFFF, #E4E4E7)
-- **Accents**: Electric blue (#3B82F6)
-
-### Typography
-- **Headings**: Bold, high contrast
-- **Body**: Regular weight, good readability
-- **Numbers**: Monospace for prices and percentages
-
-## 📱 Responsive Design
-
-- **Mobile**: 320px - 768px
-- **Tablet**: 768px - 1024px
-- **Desktop**: 1024px+
-
-### Mobile Features
-- Bottom navigation bar
-- Swipeable charts
-- Collapsible table columns
-- Touch-optimized interactions
-
-## ⚡ Performance
-
-- **Virtual Scrolling**: Efficient rendering of large datasets
-- **Memoization**: React.memo for expensive components
-- **Debounced Search**: 300ms debounce for search inputs
-- **Lazy Loading**: Images and components loaded on demand
-- **Code Splitting**: Automatic code splitting with Next.js
 
 ## 🔧 Configuration
 
@@ -173,34 +139,6 @@ NEXT_PUBLIC_COINGECKO_API_URL=https://api.coingecko.com/api/v3
 - Update mock data in `src/services/mockData.ts`
 - Customize animations in component files
 
-## 🧪 Testing
-
-Run the test suite:
-```bash
-yarn test
-```
-
-Run linting:
-```bash
-yarn lint
-```
-
-## 🚀 Deployment
-
-Build for production:
-```bash
-yarn build
-```
-
-Start production server:
-```bash
-yarn start
-```
-
-Deploy to Vercel:
-```bash
-vercel
-```
 
 ## 🔔 Notification System
 
